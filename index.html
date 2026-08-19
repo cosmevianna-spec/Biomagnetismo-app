@@ -608,7 +608,7 @@ if('serviceWorker' in navigator && (location.protocol==='https:' || location.hos
   </div>
 </div>
 <script type="module">
-import { fetchParesWithFallback } from './js/pares-service.js';
+import { fetchSearchParesWithFallback } from './js/pares-service.js';
 import { initAuth } from './js/auth.js';
 import { initAdminPares, onAuthSession } from './js/admin-pares.js';
 import { PARES_INFO } from './js/pares-info.js';
@@ -617,7 +617,7 @@ window.PARES_INFO = PARES_INFO;
 
 async function refreshPublicPares() {
   const localPairs = window.DATA && window.DATA.pairs ? window.DATA.pairs : [];
-  const result = await fetchParesWithFallback(localPairs);
+  const result = await fetchSearchParesWithFallback(localPairs);
   window.pairsCache = result.pairs;
   if (typeof window.searchPairs === 'function') window.searchPairs();
 }

@@ -130,6 +130,114 @@ export async function fetchParesWithFallback(localPairs, options = {}) {
   }
 }
 
+function foldName(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toUpperCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function unorderedPairKey(pontoA, pontoB) {
+  const a = foldName(pontoA);
+  const b = foldName(pontoB);
+  return a <= b ? `${a}|${b}` : `${b}|${a}`;
+}
+
+/**
+ * Relacoes ativas da estrutura nova (pontos + relacoes_ressonancia).
+ * Pendentes ficam de fora (status=ativa / RLS).
+ */
+export async function fetchActiveRelacoesMapped() {
+  const client = requireSupabase();
+  const [{ data: pontos, error: pontosError }, { data: relacoes, error: relacoesError }] =
+    await Promise.all([
+      client.from('pontos').select('id, nome_exibido').eq('ativo', true).limit(1000),
+      client
+        .from('relacoes_ressonancia')
+        .select('id, ponto_min_id, ponto_max_id, status')
+        .eq('status', 'ativa')
+        .limit(1000),
+    ]);
+
+  throwIfError(pontosError, 'Erro ao buscar pontos no Supabase.');
+  throwIfError(relacoesError, 'Erro ao buscar ressonâncias no Supabase.');
+
+  const nomes = new Map((pontos ?? []).map((p) => [p.id, p.nome_exibido]));
+  const mapped = [];
+
+  for (const relacao of relacoes ?? []) {
+    const a = nomes.get(relacao.ponto_min_id);
+    const b = nomes.get(relacao.ponto_max_id);
+    if (!a || !b) continue;
+    mapped.push({
+      id: relacao.id,
+      n: null,
+      a,
+      b,
+      type: 'Par Biomagnético',
+      origem: 'RESSONANCIA',
+    });
+  }
+
+  return mapped;
+}
+
+function mergeLegacyAndRelacoes(legacyPairs, relacoes) {
+  const merged = [];
+  const seen = new Set();
+
+  for (const par of Array.isArray(legacyPairs) ? legacyPairs : []) {
+    const key = unorderedPairKey(par.a, par.b);
+    if (!key || key === '|') continue;
+    seen.add(key);
+    merged.push(par);
+  }
+
+  for (const relacao of Array.isArray(relacoes) ? relacoes : []) {
+    const key = unorderedPairKey(relacao.a, relacao.b);
+    if (!key || key === '|' || seen.has(key)) continue;
+    seen.add(key);
+    merged.push(relacao);
+  }
+
+  return merged;
+}
+
+/**
+ * Cache da busca publica: BASE_V4 (ou fallback local) + ressonancias ativas.
+ * Se a estrutura nova falhar, permanece o comportamento V4 atual.
+ */
+export async function fetchSearchParesWithFallback(localPairs, options = {}) {
+  const { timeoutMs = 5000 } = options;
+  const v4Result = await fetchParesWithFallback(localPairs, options);
+
+  try {
+    const extraPromise = fetchActiveRelacoesMapped();
+    const extra =
+      timeoutMs > 0
+        ? await Promise.race([
+            extraPromise,
+            new Promise((_, reject) =>
+              setTimeout(
+                () => reject(new Error(`Timeout ao buscar ressonâncias (${timeoutMs}ms).`)),
+                timeoutMs
+              )
+            ),
+          ])
+        : await extraPromise;
+
+    return {
+      source: extra.length ? 'remote' : v4Result.source,
+      pairs: mergeLegacyAndRelacoes(v4Result.pairs, extra),
+      error: v4Result.error,
+    };
+  } catch {
+    return v4Result;
+  }
+}
+
 /**
  * Lista todos os pares para administracao (ativos e desativados).
  * Requer usuario autenticado para ver registros com ativo=false.

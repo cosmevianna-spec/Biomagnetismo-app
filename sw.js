@@ -1,4 +1,4 @@
-const CACHE = 'biomagnetismo-v1';
+const CACHE = 'biomagnetismo-v2';
 const ASSETS = [
   './',
   './index.html',
