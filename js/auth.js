@@ -157,7 +157,20 @@ async function sendRecoveryEmail() {
       redirectTo: recoveryRedirectUrl(),
     });
 
-    if (error && !/user not found|unable to validate email/i.test(error.message || '')) {
+    if (error) {
+      const msg = error.message || '';
+      if (/user not found|unable to validate email/i.test(msg)) {
+        setAuthMessage(
+          'Se o e-mail estiver cadastrado, você receberá as instruções de recuperação.'
+        );
+        return;
+      }
+      if (error.status === 429 || /rate limit/i.test(msg)) {
+        setAuthError(
+          'Aguarde alguns minutos. Já foi enviado um e-mail recentemente; use o link mais novo da caixa de entrada (e do spam).'
+        );
+        return;
+      }
       setAuthError('Não foi possível enviar o e-mail de recuperação. Tente novamente.');
       return;
     }
