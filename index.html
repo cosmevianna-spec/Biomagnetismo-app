@@ -468,14 +468,40 @@ function speakResonancePair(p){
   const {found, others}=resonanceParts(p);
   speakPairQuestions(others.map(other=>found+', '+other+'?'));
 }
+const SEARCH_NAME_ALIASES={
+  'CONDUTO DO PANCREAS':['CONDUTO PANCREAS'],
+  'LARINGE SUP. AO POMULO DE ADAO':['LARINGE (SUPERIOR AO POMULO DE ADAO)'],
+  'TROPAS DIREITA OU ESQUERDA':['TROMPAS D. OU E.'],
+  'INTER ILIACO DIREITA OU ESQUERDA':['INTERILIACO D. E/OU E.'],
+  'ESTERNOCLEIDOMAS TOIDEO DIREITA OU ESQUERDA':['ESTERNOCLEIDOMASTOIDEO D. OU E.'],
+  'TEMPORAL ESQUERDO':['TEMPORAL E.']
+};
+function foldSearchKey(s){
+  return String(s||'')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'')
+    .toUpperCase()
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function pairMatchesSearch(p, raw){
+  const q=normPoint(raw);
+  const a=normPoint(p.a), b=normPoint(p.b);
+  if(!q) return true;
+  if(a===q || a.includes(q) || b===q || b.includes(q)) return true;
+  const aliases=SEARCH_NAME_ALIASES[foldSearchKey(raw)];
+  if(!aliases) return false;
+  for(const alias of aliases){
+    const aliasFold=foldSearchKey(alias);
+    if(foldSearchKey(p.a)===aliasFold || foldSearchKey(p.b)===aliasFold) return true;
+    const n=normPoint(alias);
+    if(n && (a===n || a.includes(n) || b===n || b.includes(n))) return true;
+  }
+  return false;
+}
 function searchPairs(){
   const raw=document.getElementById('search').value.trim();
-  const q=normPoint(raw);
-  let out=window.pairsCache.filter(p=>{
-    if(!q)return true;
-    const a=normPoint(p.a), b=normPoint(p.b);
-    return a===q || a.includes(q) || b===q || b.includes(q);
-  }).slice(0,80);
+  let out=window.pairsCache.filter(p=>pairMatchesSearch(p, raw)).slice(0,80);
   document.getElementById('results').innerHTML=out.length?out.map((p,i)=>`<div class="result"><b>${esc(pairCaption(p))}</b>${pairDetailsHtml(p)}<div class="row"><button class="secondary" onclick='selectPair(${JSON.stringify({n:p.n,a:p.a,b:p.b,type:p.type}).replace(/'/g,"&apos;")})'>Selecionar</button><button class="secondary" onclick='speakResonancePair(${JSON.stringify({n:p.n,a:p.a,b:p.b,type:p.type}).replace(/'/g,"&apos;")})'>🔊 Falar ponto</button></div></div>`).join(''):'<div class="small">Nenhum par encontrado.</div>'}
 function selectPair(p){
   selected=p;
