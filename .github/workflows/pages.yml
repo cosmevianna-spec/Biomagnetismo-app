@@ -1,0 +1,49 @@
+name: Publicar site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar arquivos do aplicativo
+        run: |
+          mkdir site
+          cp index.html manifest.webmanifest sw.js .nojekyll site/
+          cp -r icons site/
+          mkdir site/js
+          cp js/pares-info.js js/pares-service.js js/supabase-client.js js/auth.js js/admin-pares.js js/config.js site/js/
+      - name: Conferir que o site não tem PDFs nem chaves secretas
+        run: |
+          if find site -iname '*.pdf' -print -quit | grep -q .; then
+            echo "PDF encontrado; recusando publicação."
+            exit 1
+          fi
+          if grep -RIn -E 'SUPABASE_SERVICE_ROLE|sb_secret_|BEGIN (RSA |OPENSSH )?PRIVATE KEY' site; then
+            echo "Segredo encontrado; recusando publicação."
+            exit 1
+          fi
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4

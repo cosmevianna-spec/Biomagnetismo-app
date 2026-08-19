@@ -1,0 +1,11 @@
+*.pdf
+.env
+.env.local
+.env.*.local
+.env.keys
+*.pem
+scripts/
+supabase/
+__pycache__/
+.DS_Store
+Thumbs.db

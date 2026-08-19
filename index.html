@@ -1,0 +1,628 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Biomagnetismo — Assistente de Rastreio</title>
+<meta name="theme-color" content="#17191e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101114;color:#f2f2f2;font-family:Arial,sans-serif}header{padding:18px 22px;background:#17191e;border-bottom:1px solid #2c2f36;position:sticky;top:0;z-index:5}h1{margin:0;font-size:22px}.sub{color:#aeb3bd;font-size:13px;margin-top:5px}main{max-width:1100px;margin:auto;padding:18px}.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:16px}.card{background:#17191e;border:1px solid #2b2e35;border-radius:16px;padding:18px}.point{font-size:34px;font-weight:700;min-height:90px;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid #343842;border-radius:14px;background:#0f1115;padding:15px}button{border:0;border-radius:10px;padding:13px 16px;font-size:15px;font-weight:700;cursor:pointer;background:#e6e6e6;color:#111}button.secondary{background:#2a2e36;color:#fff}button.red{background:#9b3d3d;color:white}button.green{background:#3c7c59;color:white}button:disabled{opacity:.4;cursor:not-allowed}.row{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.badge{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;background:#252932;color:#cdd2da}.north{background:#252932}.south{background:#8c3b3b}.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.tabs button{background:#2a2e36;color:#cdd2da;box-shadow:inset 0 0 0 1px #3a3e47}.tabs button.active{background:#3c7c59;color:#fff;box-shadow:0 0 0 3px rgba(110,155,123,.55)}input{width:100%;padding:13px;border-radius:10px;border:1px solid #3a3e47;background:#0e1014;color:#fff;font-size:16px}.results{margin-top:12px;display:flex;flex-direction:column;gap:8px;max-height:430px;overflow:auto}.result{padding:12px;border:1px solid #30343c;border-radius:12px;background:#111318}.result b{display:block;margin-bottom:5px}.pair-meta{margin-top:6px;display:flex;flex-direction:column;gap:4px}.pair-meta b{display:inline;margin:0;font-weight:700}.timer{padding:12px;border:1px solid #343842;border-radius:12px;margin-bottom:8px;background:#111318}.timer .time{font-size:27px;font-weight:700}.done{border-color:#7aa47f}.small{font-size:12px;color:#aeb3bd}.auto-controls{margin-top:14px;padding:13px;border:1px solid #30343c;border-radius:12px;background:#111318}.auto-controls label{display:block;margin:8px 0 4px}.auto-controls input[type=range]{width:100%;padding:0}.auto-running{outline:2px solid #6e9b7b}.list{max-height:330px;overflow:auto;margin-top:10px}.list button{display:block;width:100%;text-align:left;margin:5px 0;background:#242831;color:#fff}.name-edit{margin-top:12px}.name-edit .orig{margin-bottom:8px}@media(max-width:800px){.grid{grid-template-columns:1fr}.point{font-size:28px}}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.header-actions{display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0}.modal{display:none;position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:18px}.modal.open{display:flex}.modal-box{width:min(520px,100%);background:#17191e;border:1px solid #2b2e35;border-radius:16px;padding:18px;max-height:90vh;overflow:auto}.modal-box h3{margin:0 0 12px}.modal-box label{display:block;margin:8px 0 4px;font-size:13px;color:#aeb3bd}.admin-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;align-items:stretch}.admin-toolbar input{width:auto;flex:1;min-width:220px}.admin-list{max-height:480px;overflow:auto;margin-top:12px;display:flex;flex-direction:column;gap:8px}.origin-base{background:#2a3a4a}.origin-user{background:#3a2a4a}.status-off{opacity:.7}#authError,#adminParError{color:#e88;font-size:13px;margin-top:8px}#authMessage{color:#8fd4a8;font-size:13px;margin-top:8px}.auth-link{background:none;border:0;padding:0;margin-top:10px;color:#9ec0ff;font-size:13px;font-weight:700;cursor:pointer}.auth-view[hidden]{display:none!important}select.admin-select{width:auto;min-width:140px;padding:13px;border-radius:10px;border:1px solid #3a3e47;background:#0e1014;color:#fff;font-size:16px}
+html{-webkit-text-size-adjust:100%}body{padding-bottom:env(safe-area-inset-bottom)}header{padding-top:max(18px,env(safe-area-inset-top))}button,input,select{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+@media(max-width:800px){
+  h1{font-size:18px;line-height:1.3}
+  header{padding:14px 14px 12px;gap:8px}
+  main{padding:12px}
+  .card{padding:14px}
+  .point{font-size:24px;min-height:72px;padding:12px}
+  button{min-height:44px}
+  .tabs button{flex:1 1 calc(50% - 8px)}
+  .header-actions button{min-height:40px;padding:10px 12px;font-size:14px}
+  .admin-toolbar input{min-width:0;width:100%}
+}
+</style></head><body>
+<header>
+  <div>
+    <h1>🧲 Biomagnetismo — Assistente de Rastreio</h1>
+    <div class="sub">Guia de memória com fala automática, busca de pares e múltiplos timers.</div>
+  </div>
+  <div class="header-actions">
+    <button type="button" id="adminParesBtn" class="secondary" hidden>Pares Biomagnéticos</button>
+    <button type="button" id="authButton" class="secondary">Entrar</button>
+  </div>
+</header>
+<main><div class="grid">
+<section class="card"><div class="tabs">
+  <button type="button" data-mode="reservatorios" class="active" onclick="setMode('reservatorios')">Pares reservatórios — 25</button>
+  <button type="button" data-mode="frontal" onclick="setMode('frontal')">Frontal — 90</button>
+  <button type="button" data-mode="posterior" onclick="setMode('posterior')">Posterior — 75</button>
+  <button type="button" data-mode="chakras" onclick="setMode('chakras')">Chakras — 9</button>
+  <button type="button" data-mode="cromossomos" onclick="setMode('cromossomos')">Cromossomos — 23</button>
+</div>
+<div><span class="badge north">NORTE / preto — rastreio</span> <span class="badge south">SUL / vermelho — busca do par</span></div>
+<div id="point" class="point">Pressione INICIAR</div>
+<div class="small" id="pointHint" style="text-align:center;margin-top:8px"></div>
+<div id="nameEdit" class="auto-controls name-edit" hidden>
+  <div class="small orig" id="nameEditOrig"></div>
+  <div id="nameEditFields"></div>
+  <div class="row">
+    <button type="button" class="green" onclick="savePointName()">Salvar nome</button>
+    <button type="button" class="secondary" onclick="resetPointName()">Resetar este</button>
+    <button type="button" class="secondary" onclick="resetListPointNames()">Resetar lista</button>
+  </div>
+</div>
+<div class="row"><button onclick="start()">▶ Iniciar</button><button class="secondary" onclick="toggleAuto()" id="autoBtn">⏸ Pausar automático</button><button class="secondary" onclick="prev()">◀ Anterior</button><button class="secondary" onclick="next()">Próximo ▶</button><button class="secondary" onclick="repeatSpeech()">🔊 Repetir</button><button class="secondary" onclick="stopGuide()">⏹ Parar</button></div>
+<div class="auto-controls">
+  <div><label for="interval"><b>Tempo por ponto:</b> <span id="intervalLabel">8 s</span></label><input id="interval" type="range" min="3" max="30" value="8" oninput="updateInterval()"></div>
+  <div><label for="speechRate"><b>Velocidade da fala:</b> <span id="speechLabel">normal</span></label><input id="speechRate" type="range" min="0.55" max="1.15" step="0.05" value="0.82" oninput="updateSpeechRate()"></div>
+  <div class="row"><button class="secondary" onclick="unlockAudio()">🔊 Ativar áudio</button><button class="secondary" onclick="testSound()">🎧 Testar voz</button><button class="secondary" onclick="testBeep()">🔔 Testar sinal</button><span class="small" style="align-self:center">Toque em “Ativar áudio” antes de iniciar. No iPhone use o Safari; no Android use o Chrome.</span></div><div class="small" id="audioStatus" style="margin-top:8px">Áudio ainda não ativado.</div>
+</div>
+<div class="row"><button class="red" id="resonanceBtn" onclick="openResonance()">🔎 Encontrei este ponto — buscar ressonâncias</button></div>
+<div class="small" id="progress">0 / 0</div><div class="list" id="pointList"></div>
+</section>
+<section class="card"><h2 style="margin-top:0">🔎 Ressonâncias</h2><div class="small">Digite um ponto encontrado para ver os pares associados.</div><div class="row"><input id="search" placeholder="Ex.: estômago, fígado, pineal..." oninput="searchPairs()"></div><div class="results" id="results"></div><div class="row"><button class="green" onclick="activateSelected()">🧲 Ativar par selecionado + 40 min</button></div><div class="small" id="selectedInfo">Nenhum par selecionado.</div></section>
+</div>
+<section class="card" style="margin-top:16px"><h2 style="margin-top:0">⏱️ Pares ativos</h2><div class="small">Cada par tem seu próprio cronômetro de 40 minutos. O aplicativo pode manter vários simultaneamente.</div><div id="timers" style="margin-top:12px"></div></section>
+<section class="card" style="margin-top:16px"><h2 style="margin-top:0">📋 Histórico do rastreio</h2>
+<div class="small">Pares que foram ativados nesta sessão, com horário de início e situação.</div>
+<div id="history" style="margin-top:12px"></div></section>
+<section id="adminParesCard" class="card" style="margin-top:16px" hidden>
+  <h2 style="margin-top:0">Pares Biomagnéticos</h2>
+  <div class="small">Administração dos pares cadastrados. A consulta pública continua mostrando apenas pares ativos. Os 203 pares BASE_V4 são preservados.</div>
+  <div class="small" id="adminParesSummary" style="margin-top:8px"></div>
+  <div class="admin-toolbar">
+    <input id="adminBusca" placeholder="Pesquisar Ponto A, Ponto B, categoria, descrição...">
+    <select id="adminFiltro" class="admin-select">
+      <option value="todos">Todos</option>
+      <option value="ativos">Ativos</option>
+      <option value="desativados">Desativados</option>
+    </select>
+    <button type="button" class="green" id="adminNovoPar">Novo Par Biomagnético</button>
+  </div>
+  <div id="adminParesList" class="admin-list"></div>
+</section>
+<section class="card" style="margin-top:16px"><details><summary><b>Sobre a base utilizada</b></summary><p class="small">O aplicativo apresenta os pontos e pares cadastrados. Não determina diagnóstico, ressonância ou colocação de ímãs.</p></details></section>
+</main>
+<script>const DATA={"frontal": ["PINEAL", "PRE-PINEAL", "PÓS-PINEAL", "PARIETAL DIREITO OU ESQUERDO", "HIPÓFISE", "OLHO DIREITO OU ESQUERDO", "TÊMPORAS DIREITA OU ESQUERDA", "OUVIDO DIREITO OU ESQUERDO", "PRÉ AURICULAR DIREITO OU ESQUERDO", "ORELHA DIREITO OU ESQUERDO", "MASTOIDES DIREITO OU ESQUERDO", "PÔMULO DIREITO OU ESQUERDO", "LÍNGUA DIREITO OU ESQUERDO", "MANDÍBULA (C)", "ÂNGULO DA MANDÍBULA DIREITO OU ESQUERDO", "RAMA MANDIBULAR DIREITO OU ESQUERDO", "PARÓTIDA DIREITA OU ESQUERDA", "TIREOIDES (C)", "PARATIREOIDES DIREITO OU ESQUERDO", "LARINGE SUP. AO PÔMULO DE ADÃO", "TIMO", "MEDIASTINO (SUPERIOR AO TIMO)", "CÁRDIAS", "ESTOMAGO", "CABEÇA DO PÂNCREAS", "CORPO DO PÂNCREAS", "CAUDA DO PÂNCREAS", "PONTA DO PÂNCREAS", "LIGAMENTO PANCREÁTICO", "BAÇO", "AXILA DIREITA OU ESQUERDA", "SUBCLÁVIA DIREITA OU ESQUERDA", "SUPRA ESPINHOSO DIREITA OU ESQUERDA", "DELTOIDES DIREITA OU ESQUERDA", "ÚMERO DIREITA OU ESQUERDA", "BURSA DIREITA OU ESQUERDA", "COTOVELO DIREITA OU ESQUERDA", "BRAQUIAL DIREITA OU ESQUERDA", "ULNA DIREITA OU ESQUERDA", "RADIO DIREITA OU ESQUERDA", "PUNHO DIREITA OU ESQUERDA", "PALMA DIREITA OU ESQUERDA", "INDICADOR DIREITA OU ESQUERDA", "PLEURA DIREITA OU ESQUERDA", "SUPRA-HEPÁTICO DIREITA OU ESQUERDA", "FÍGADO", "PERI-HEPÁTICO", "COSTO-HEPÁTICO", "COSTO- DIAFRAGMÁTICO", "VESÍCULA", "CONDUTO VESÍCULA", "PILORO", "CONDUTO DO PÂNCREAS", "DUODENO", "VÁLVULA ILEOCECAL", "CÓLON ASCENDENTE", "CÓLON TRANSVERSO", "CÓLON DESCENDENTE", "SIGMOIDES", "URETER DIREITA OU ESQUERDA", "ÚTERO", "TROPAS DIREITA OU ESQUERDA", "TESTÍCULO DIREITA OU ESQUERDA", "VAGINA", "PRÓSTATA", "ANUS", "RETO", "CLITÓRIS", "CECO", "CONTRA CECO", "BEXIGA", "URETRA", "SUPRA PÚBICO", "APÊNDICE", "SACO DE DOUGLAS", "ANEXO DIREITA OU ESQUERDA", "PUDENDO DIREITA OU ESQUERDA", "NERVO INGUINAL DIREITA OU ESQUERDA", "ADUTOR DIREITA OU ESQUERDA", "TÍBIA DIREITA OU ESQUERDA", "FÍBULA DIREITA OU ESQUERDA", "CALCÂNEO DIREITA OU ESQUERDA", "AQUILES DIREITA OU ESQUERDA", "POPLÍTEO DIREITA OU ESQUERDA", "LIGAMENTO EXTERNO DO JOELHO DIREITA OU ESQUERDA", "TENSOR DA FÁSCIA LATA DIREITA OU ESQUERDA", "TROCANTER MAIOR DIREITA OU ESQUERDA", "TROCANTER MENOR DIREITA OU ESQUERDA", "QUADRIL DIREITA OU ESQUERDA", "QUADRÍCEPS DIREITA OU ESQUERDA"], "posterior": ["CIÁTICO DIREITA OU ESQUERDA", "ÍSQUIO DIREITA OU ESQUERDA", "GLÚTEO DIREITA OU ESQUERDA", "CÓCCIX DIREITA OU ESQUERDA", "SACRO DIREITA OU ESQUERDA", "INTER ILÍACO DIREITA OU ESQUERDA", "LOMBAR", "VEIA FEMORAL DIREITA OU ESQUERDA", "PÚBIS", "OVÁRIO DIREITA OU ESQUERDA", "ILÍACO DIREITA OU ESQUERDA", "CRISTA ILÍACA DIREITA OU ESQUERDA", "RAMA ISQUIÁTICA DIREITA OU ESQUERDA", "QUADRADO LOMBAR DIREITA OU ESQUERDA", "4º LOMBAR DIREITA OU ESQUERDA", "CÁLICE RENAL DIREITA OU ESQUERDA", "RIM DIREITA OU ESQUERDA", "CAPSULA RENAL DIREITA OU ESQUERDA", "SUPRARRENAL DIREITA OU ESQUERDA", "CAVA DIREITA OU ESQUERDA", "ESCÁPULA DIREITA OU ESQUERDA", "DORSO", "2ª TORÁCICA (T2)", "PESCOÇO DIREITA OU ESQUERDA", "PLEXO CERVICAL DIREITA OU ESQUERDA", "ÚLTIMA CERVICAL (C 7)", "CERVICAL", "ATLAS ( C1 )", "BULBO RAQUIDIANO", "CEREBELO", "OCCIPITAL DIREITA OU ESQUERDA", "TEMPORAL DIREITA OU ESQUERDA", "TEMPORAL DIREITO", "TEMPORAL ESQUERDO", "TÊMPORA OCCIPITAL (ARTICULAÇÃO) DIREITA OU ESQUERDA", "SEIO FRONTAL DIREITA OU ESQUERDA", "SEIO NASAL DIREITA OU ESQUERDA", "POLO DIREITA OU ESQUERDA", "ANTECUERNO DIREITA OU ESQUERDA", "MALAR DIREITA OU ESQUERDA", "CRANIAL DIREITA OU ESQUERDA", "LACRIMAL DIREITA OU ESQUERDA", "NARIZ DIREITA OU ESQUERDA", "INTER CILIAR", "SUPRACILIAR", "COMISSURA DIREITA OU ESQUERDA", "CANTO DO OLHO DIREITA OU ESQUERDA", "PÁLPEBRA DIREITA OU ESQUERDA", "PISO ORBITAL DIREITA OU ESQUERDA", "QUIASMA DIREITA OU ESQUERDA", "POLÍGONO DE WILLIS DIREITA OU ESQUERDA", "ÂNGULO DIREITA OU ESQUERDA", "AMÍGDALA DIREITA OU ESQUERDA", "RETRO HEPÁTICO", "NERVO VAGO DIREITA OU ESQUERDA", "CARÓTIDA DIREITA OU ESQUERDA", "PRIMEIRA COSTELA DIREITA OU ESQUERDA", "MANÚBRIO DO ESTERNO DIREITA OU ESQUERDA", "CARINA DIREITA OU ESQUERDA", "ESTERNO DIREITA OU ESQUERDA", "TRAQUEIA", "ESÔFAGO", "HIATO ESOFÁGICO", "CONDRAL DIREITA OU ESQUERDA", "COSTAL DIREITA OU ESQUERDA", "FLANCO DIREITA OU ESQUERDA", "DIAFRAGMA DIREITA OU ESQUERDA", "EPIPLON DIREITA OU ESQUERDA", "LIGAMENTO HEPÁTICO", "SEIO ATRIOVENTRICULAR", "PERICÁRDIO", "CORONÁRIA", "PULMÃO DIREITA OU ESQUERDA", "PERITÔNIO DIREITA OU ESQUERDA", "ESTERNOCLEIDOMAS TÓIDEO DIREITA OU ESQUERDA"], "pairs": [{"n": 1, "a": "DENTE", "b": "RIM D. OU E.", "type": "RESERVATÓRIO", "page": 26}, {"n": 2, "a": "NERVO VAGO D. E/OU E.", "b": "RIM D. OU E.", "type": "RESERVATÓRIO", "page": 26}, {"n": 3, "a": "PLEURA D. E/OU E.", "b": "PERITÔNEO D. OU E.", "type": "RESERVATÓRIO", "page": 26}, {"n": 4, "a": "PERITÔNEO D. E/OU E.", "b": "PERITÔNEO CONTRALATERAL", "type": "RESERVATÓRIO", "page": 26}, {"n": 5, "a": "CAPSULA RENAL D. E/OU E.", "b": "RIM CONTRALATERAL OU MESMO LADO", "type": "RESERVATÓRIO", "page": 26}, {"n": 6, "a": "INTERILÍACO D. E/OU E.", "b": "SACRO", "type": "RESERVATÓRIO", "page": 27}, {"n": 7, "a": "METÁFISE DO FÊMUR D. E/OU E.", "b": "METÁFISE DO FÊMUR CONTRALATERAL", "type": "RESERVATÓRIO", "page": 27}, {"n": 8, "a": "VESÍCULA", "b": "VESÍCULA (HORIZONTAL)", "type": "RESERVATÓRIO", "page": 27}, {"n": 9, "a": "URETRA", "b": "URETRA (HORIZONTAL)", "type": "RESERVATÓRIO", "page": 27}, {"n": 10, "a": "BAÇO", "b": "PULMÃO E. OU D.", "type": "RESERVATÓRIO", "page": 27}, {"n": 11, "a": "INDICADOR D. E/OU E.", "b": "INDICADOR CONTRALATERAL", "type": "RESERVATÓRIO", "page": 27}, {"n": 12, "a": "VAGINA", "b": "VAGINA (HORIZONTAL)", "type": "RESERVATÓRIO", "page": 28}, {"n": 13, "a": "CICATRIZ (Local de cicatriz, membro amputado, queloides)", "b": "CICATRIZ", "type": "RESERVATÓRIO", "page": 28}, {"n": 14, "a": "APÊNDICE", "b": "BEXIGA", "type": "RESERVATÓRIO", "page": 28}, {"n": 15, "a": "MORDIDA DE ANIMAL (LOCAL)", "b": "AXILA (MESMO LADO)", "type": "RESERVATÓRIO", "page": 28}, {"n": 16, "a": "VACINA (LOCAL)", "b": "SUPRA ESPINHOSO (MESMO LADO)", "type": "RESERVATÓRIO", "page": 28}, {"n": 17, "a": "CALCANHAR D. OU E.", "b": "CALCANHAR CONTRALATERAL", "type": "RESERVATÓRIO", "page": 28}, {"n": 18, "a": "NUTRÍCIA D. E/OU E.", "b": "NUTRÍCIA (MESMO LADO)", "type": "RESERVATÓRIO", "page": 29}, {"n": 19, "a": "ASSOALHO PÉLVICO", "b": "ASSOALHO PÉLVICO CONTRALATERAL", "type": "RESERVATÓRIO", "page": 29}, {"n": 20, "a": "BORDA DO CORPO CALOSO D. E/OU E., ANT.", "b": "BORDA DO CORPO CALOSO CONTRALATERAL, POST.", "type": "RESERVATÓRIO", "page": 29}, {"n": 21, "a": "CABEÇA DA FÍBULA D. OU E.", "b": "CABEÇA DA FÍBULA CONTRALATERAL", "type": "RESERVATÓRIO", "page": 29}, {"n": 22, "a": "CÁRDIAS", "b": "TEMPORAL D.", "type": "RESERVATÓRIO", "page": 29}, {"n": 23, "a": "SUBDIAFRAGMA D. OU E.", "b": "SUBDIAFRAGMA CONTRALATERAL", "type": "RESERVATÓRIO", "page": 30}, {"n": 24, "a": "PINEAL", "b": "PINEAL", "type": "Disfunção da pineal Disfunção Glandular", "page": 31}, {"n": 25, "a": "PINEAL", "b": "BULBO RAQUIDIANO", "type": "Guillain-Barré Doença Viral", "page": 31}, {"n": 26, "a": "PINEAL", "b": "MAMILO D. E/OU E.", "type": "Sarita Par Especial", "page": 31}, {"n": 27, "a": "PINEAL", "b": "FÍGADO", "type": "PAR ESPECIAL VITILIGO", "page": 31}, {"n": 28, "a": "PINEAL", "b": "PRÓSTATA", "type": "PAR EMOCIONAL", "page": 31}, {"n": 29, "a": "PRE-PINEAL", "b": "BEXIGA", "type": "Cryptococcus neoformans Fungo", "page": 31}, {"n": 30, "a": "PRE-PINEAL", "b": "PÓS-PINEAL", "type": "Cryptococcus neoformans Fungo", "page": 31}, {"n": 31, "a": "PÓS-PINEAL", "b": "BEXIGA", "type": "Cryptococcus neoformans Fungo", "page": 32}, {"n": 32, "a": "PÓS-PINEAL", "b": "BULBO", "type": "Par Especial", "page": 32}, {"n": 33, "a": "PÓS-PINEAL", "b": "AMÍGDALA CEREBRAL", "type": "Par Emocional", "page": 32}, {"n": 34, "a": "PÓS-PINEAL", "b": "PÓS-PINEAL", "type": "Par Emocional", "page": 32}, {"n": 35, "a": "PARIETAL D. E/OU E.", "b": "PARIETAL CONTRALATERAL", "type": "Encefalites Viral Doença viral", "page": 33}, {"n": 36, "a": "PARIETAL D. E/OU E.", "b": "RIM CONTRALATERAL", "type": "Par Especial Assimetria de Membros Inferiores.", "page": 33}, {"n": 37, "a": "PARIETAL D. E/OU E.", "b": "CÓLON TRANSVERSO", "type": "Entamoeba histolytica Doença parasitaria", "page": 33}, {"n": 38, "a": "PARIETAL D. E/OU E.", "b": "RIM (MESMO LADO)", "type": "PAR ESPECIAL", "page": 33}, {"n": 39, "a": "HIPÓFISE", "b": "HIPÓFISE", "type": "Disfunção glandular", "page": 33}, {"n": 40, "a": "HIPÓFISE", "b": "BULBO RAQUIDIANO", "type": "Diabetes insípida Enfermidade Complexa", "page": 33}, {"n": 41, "a": "HIPÓFISE", "b": "BEXIGA", "type": "Dengue Clássica Doença Viral", "page": 33}, {"n": 42, "a": "HIPÓFISE", "b": "OVÁRIO E. OU D.", "type": "Disfunção de ovários Par Especial Carmen", "page": 33}, {"n": 43, "a": "OLHO D. OU E.", "b": "OLHO CONTRALATERAL", "type": "Citomegalovírus Doença Viral", "page": 34}, {"n": 44, "a": "OLHO D. OU E.", "b": "CEREBELO", "type": "Par Especial", "page": 34}, {"n": 45, "a": "TÊMPORAS D. OU E.", "b": "TÊMPORAS CONTRALATERAL", "type": "Par Especial", "page": 34}, {"n": 46, "a": "OUVIDO D. OU E.", "b": "OUVIDO CONTRALATERAL", "type": "Toxoplasma gondii Doença parasitaria", "page": 34}, {"n": 47, "a": "PRÉ AURICULAR D. E/OU E.", "b": "PRÉ AURICULAR (DO MESMO LADO - VERTICAL)", "type": "Nocardia Americana Bactéria", "page": 34}, {"n": 48, "a": "ORELHA D. OU E.", "b": "ORELHA CONTRALATERAL", "type": "Pares craniais Par Especial Leny", "page": 35}, {"n": 49, "a": "MASTOIDES D. E/OU E.", "b": "MASTOIDES CONTRALATERAL", "type": "Filaria Doença parasitaria", "page": 35}, {"n": 50, "a": "PÔMULO D. OU E.", "b": "RIM CONTRALATERAL", "type": "Plasmodium vivax Doença parasitaria", "page": 35}, {"n": 51, "a": "LÍNGUA D. E/OU E.", "b": "LÍNGUA CONTRALATERAL", "type": "Sarcoptes Scabiei Doença parasitaria", "page": 35}, {"n": 52, "a": "MANDÍBULA", "b": "MANDÍBULA LADO D. OU E.", "type": "Neisseria gonorrhoeae Doença Bacteriana", "page": 35}, {"n": 53, "a": "ÂNGULO DA MANDÍBULA D. OU E.", "b": "ÂNGULO DA MANDÍBULA CONTRALATERAL", "type": "Estreptococo fragilis Bactéria", "page": 36}, {"n": 54, "a": "RAMA MANDIBULAR D. E/OU E.", "b": "RAMA MANDIBULAR CONTRALATERAL", "type": "Staphylococcus epidermidis Bactéria", "page": 36}, {"n": 55, "a": "PARÓTIDA D. OU E.", "b": "PARÓTIDA CONTRALATERAL", "type": "Par Especial", "page": 36}, {"n": 56, "a": "TIREOIDES (C)", "b": "TIREOIDE CONTRALATERAL", "type": "Disfunção Glandular", "page": 36}, {"n": 57, "a": "TIREOIDES (C)", "b": "BULBO RAQUIDIANO", "type": "Meningites Doença Viral", "page": 36}, {"n": 58, "a": "PARATIREOIDES D. OU E.", "b": "PARATIREOIDES CONTRALATERAL", "type": "Disfunção Glandular", "page": 37}, {"n": 59, "a": "LARINGE (SUPERIOR AO PÓMULO DE ADÃO)", "b": "LARINGE INFERIOR (ABAIXO DO PÓMULO DE ADÃO)", "type": "Bacilo Pertússis Bactéria", "page": 37}, {"n": 60, "a": "TIMO", "b": "TIMO", "type": "Disfunção glandular", "page": 37}, {"n": 61, "a": "TIMO", "b": "RETO", "type": "HIV tipo 1 Doença Viral", "page": 37}, {"n": 62, "a": "TIMO", "b": "APÊNDICE", "type": "Par Especial", "page": 37}, {"n": 63, "a": "TIMO", "b": "PARIETAL D. OU E.", "type": "Rubéola Doença Viral", "page": 37}, {"n": 64, "a": "TIMO", "b": "PÊNIS", "type": "Par Especial", "page": 38}, {"n": 65, "a": "TIMO", "b": "SUPRARRENAL", "type": "Par Especial", "page": 38}, {"n": 66, "a": "TIMO", "b": "BAÇO", "type": "Par Especial", "page": 38}, {"n": 67, "a": "TIMO", "b": "HIPÓFISE", "type": "Par Emocional", "page": 38}, {"n": 68, "a": "TIMO", "b": "OVÁRIO D. OU E.", "type": "Par Emocional", "page": 38}, {"n": 69, "a": "TIMO", "b": "TESTÍCULO D. OU E.", "type": "Par Emocional", "page": 38}, {"n": 70, "a": "MEDIASTINO (SUPERIOR AO TIMO)", "b": "MEDIASTINO (INFERIOR AO TIMO)", "type": "Proteus mirabilis Doença Bacteriana", "page": 38}, {"n": 71, "a": "CÁRDIAS", "b": "SUPRARRENAL", "type": "Estreptococo B Doença Bacteriana", "page": 39}, {"n": 72, "a": "CÁRDIAS", "b": "APÊNDICE", "type": "Bartonella Doença Bacteriana", "page": 39}, {"n": 73, "a": "CÁRDIAS", "b": "PILORO", "type": "Estreptococos C3 Doença Bacteriana", "page": 39}, {"n": 74, "a": "ESTÔMAGO", "b": "ESTÔMAGO", "type": "Par disfuncional", "page": 39}, {"n": 75, "a": "ESTÔMAGO", "b": "SUPRARRENAL", "type": "Sarampo Vírus", "page": 39}, {"n": 76, "a": "ESTÔMAGO", "b": "PILORO", "type": "Clostridium perfringens Doença Bacteriana", "page": 39}, {"n": 77, "a": "ESTÔMAGO", "b": "CÓLON TRANSVERSO", "type": "Clamídia Tucans africana Doença Bacteriana", "page": 39}, {"n": 78, "a": "ESTÔMAGO", "b": "SACRO", "type": "Clamidia Intestinales Doença Bacteriana", "page": 40}, {"n": 79, "a": "ESTÔMAGO", "b": "TIMO", "type": "Escherichia ColiTransgênica Doença Bacteriana", "page": 40}, {"n": 80, "a": "ESTÔMAGO", "b": "FÍGADO", "type": "Par Especial", "page": 40}, {"n": 81, "a": "ESTÔMAGO", "b": "CORAÇÃO", "type": "Par Emocional", "page": 40}, {"n": 82, "a": "CABEÇA DO PÂNCREAS", "b": "SUPRARRENAL", "type": "Estafilococus áureos coagulasa negativa Doença Bacteriana", "page": 40}, {"n": 83, "a": "CABEÇA DO PÂNCREAS", "b": "CORPO DO PÂNCREAS", "type": "Par Especial", "page": 40}, {"n": 84, "a": "CABEÇA DO PÂNCREAS", "b": "PILORO", "type": "Clostridium Dificile Doença Bacteriana", "page": 41}, {"n": 85, "a": "CABEÇA DO PÂNCREAS", "b": "FÍGADO", "type": "Staphilococus Áureus Doença Bacteriana", "page": 41}, {"n": 86, "a": "CORPO DO PÂNCREAS", "b": "CORPO DO PÂNCREAS", "type": "Adenovírus Doença Viral", "page": 41}, {"n": 87, "a": "CORPO DO PÂNCREAS", "b": "BAÇO", "type": "Esquinococcus granuloso Doença Bacteriana", "page": 41}, {"n": 88, "a": "CORPO DO PÂNCREAS", "b": "ESTÔMAGO", "type": "Par Especial", "page": 41}, {"n": 89, "a": "CORPO DO PÂNCREAS", "b": "DUODENO", "type": "Anisakis Doença Parasitaria", "page": 41}, {"n": 90, "a": "CAUDA DO PÂNCREAS", "b": "FÍGADO", "type": "Clostridium botulinum Doença Bacteriana", "page": 42}, {"n": 91, "a": "PONTA DO PÂNCREAS", "b": "BAÇO", "type": "Verruga comum Doença Viral", "page": 42}, {"n": 92, "a": "PONTA DO PÂNCREAS", "b": "RIM ESQ.", "type": "Par Especial", "page": 42}, {"n": 93, "a": "PONTA DO PÂNCREAS", "b": "FÍGADO", "type": "Par Disfuncional", "page": 42}, {"n": 94, "a": "LIGAMENTO PANCREÁTICO", "b": "BAÇO", "type": "Vírus do Nilo (H1N1) Doença Viral", "page": 42}, {"n": 95, "a": "LIGAMENTO PANCREÁTICO", "b": "CÓLON DESCENDENTE", "type": "Pasteurella (Doença Bacteriana) ou Febre Amarela (Doença Viral)", "page": 42}, {"n": 96, "a": "PERI PANCREÁTICO (SUPERIOR)", "b": "PERI PANCREÁTICO (INFERIOR)", "type": "Raiva Tipo 2 Doença Viral", "page": 43}, {"n": 97, "a": "BAÇO", "b": "BAÇO", "type": "Yersínia pestes Doença Bacteriana", "page": 43}, {"n": 98, "a": "BAÇO", "b": "DUODENO", "type": "Leucemia Enfermidade complexa", "page": 43}, {"n": 99, "a": "BAÇO", "b": "FÍGADO", "type": "Brucella abortus ou febre de malta Doença Bacteriana", "page": 43}, {"n": 100, "a": "BAÇO", "b": "HIPOTÁLAMO", "type": "Par Emocional", "page": 43}, {"n": 101, "a": "BAÇO", "b": "PULMÃO D. OU E.", "type": "Reservatório", "page": 43}, {"n": 134, "a": "COSTO-HEPÁTICO", "b": "COSTO-HEPÁTICO (AO LADO HORIZONTAL)", "type": "Borrelia Doença Bacteriana", "page": 50}, {"n": 135, "a": "COSTO-DIAFRAGMÁTICO (LADO ESQUERDO)", "b": "COSTO- DIAFRAGMÁTICO (LADO ESQUERDO)", "type": "Trypanosoma cruzi Doença Bacteriana", "page": 50}, {"n": 136, "a": "VEIA PORTA", "b": "VEIA PORTA (AO LADO)", "type": "Klebsiella pneumoniae Doença Bacteriana", "page": 50}, {"n": 137, "a": "VESÍCULA", "b": "RIM DIREITO", "type": "Rinovírus - Catarro comum Doença Viral", "page": 50}, {"n": 138, "a": "VESÍCULA", "b": "VESÍCULA", "type": "Reservatório", "page": 50}, {"n": 139, "a": "CONDUTO VESÍCULA", "b": "RIM DIREITO", "type": "Espiroqueta Doença Bacteriana", "page": 51}, {"n": 140, "a": "PILORO", "b": "PILORO (HORIZONTAL)", "type": "Disfunção do piloro", "page": 51}, {"n": 141, "a": "PILORO", "b": "FÍGADO", "type": "Enterobios vermicularis Oxiúros Parasitas", "page": 51}, {"n": 142, "a": "PILORO", "b": "RIM ESQUERDO", "type": "Amebíases intestinal Parasita", "page": 51}, {"n": 143, "a": "PILORO", "b": "URETER D. OU E.", "type": "Micelio intestinal / Cândida albicans Micose", "page": 51}, {"n": 144, "a": "PILORO", "b": "LÍNGUA", "type": "Triquina ou trichinella Parasita", "page": 51}, {"n": 145, "a": "PILORO", "b": "CÓLON TRANSVERSO", "type": "Par Especial", "page": 52}, {"n": 146, "a": "CONDUTO PÂNCREAS", "b": "RIM ESQUERDO", "type": "Espiroqueta Doença Bacteriana", "page": 52}, {"n": 147, "a": "DUODENO", "b": "BAÇO", "type": "Verdadeira leucemia", "page": 52}, {"n": 148, "a": "DUODENO", "b": "DUODENO (VERTICAL, UM EM CIMA E OUTRO ABAIXO)", "type": "Par Disfuncional", "page": 52}, {"n": 149, "a": "DUODENO", "b": "FÍGADO", "type": "Chlamydia trachomatis Hepatites D Bactéria", "page": 52}, {"n": 150, "a": "DUODENO", "b": "RIM DIREITO", "type": "Verdadeira Diabetes Mellitus Par Especial", "page": 53}, {"n": 151, "a": "DUODENO", "b": "RIM ESQUERDO", "type": "Chlamydia trachomatis Bactéria", "page": 53}, {"n": 152, "a": "DUODENO", "b": "CORPO DO PÂNCREAS", "type": "Anisaki Doença Parasitária", "page": 53}, {"n": 153, "a": "VÁLVULA ILEOCECAL", "b": "RIM DIREITO", "type": "Tríchomonas Bactéria", "page": 53}, {"n": 154, "a": "CÓLON ASCENDENTE", "b": "CÓLON DESCENDENTE", "type": "Herpes tipo 1 ou zoster Vírus", "page": 53}, {"n": 155, "a": "CÓLON ASCENDENTE", "b": "FÍGADO", "type": "Klebsiella pneumoniae Bactéria", "page": 53}, {"n": 156, "a": "‘ CÓLON ASCENDENTE", "b": "RIM DIREITO", "type": "Klebsiella pneumoniae Bactéria", "page": 54}, {"n": 157, "a": "‘ CÓLON ASCENDENTE", "b": "SACRO", "type": "Burkholderia Cepacea Infecção Bacteriana", "page": 54}, {"n": 158, "a": "‘ CÓLON ASCENDENTE", "b": "CÓLON ASCENDENTE", "type": "Listeria Monocytogenes Infecção Bacteriana", "page": 54}, {"n": 159, "a": "CÓLON TRANSVERSO", "b": "CÓLON TRANSVERSO (UM AO LADO DO OUTRO)", "type": "Disfunção do cólon", "page": 54}, {"n": 160, "a": "CÓLON TRANSVERSO", "b": "FÍGADO", "type": "Vibrio cholerae Hepatites G Bactéria", "page": 54}, {"n": 161, "a": "CÓLON TRANSVERSO", "b": "BEXIGA", "type": "Vibrio cholerae Bactéria", "page": 54}, {"n": 162, "a": "CÓLON TRANSVERSO", "b": "OVÁRIO OU TESTÍCULO", "type": "Par Emocional", "page": 55}, {"n": 163, "a": "CÓLON DESCENDENTE", "b": "CÓLON DESCENDENTE (VERTICAL OU HORIZONTAL)", "type": "Enterobacter cloacae Bactéria", "page": 55}, {"n": 164, "a": "CÓLON DESCENDENTE", "b": "FÍGADO", "type": "Pasteurella Hepatites A Bactéria", "page": 55}, {"n": 165, "a": "CÓLON DESCENDENTE", "b": "RETO", "type": "Par Especial", "page": 55}, {"n": 166, "a": "CÓLON DESCENDENTE", "b": "ÂNUS", "type": "Chicungunya Doença Viral", "page": 55}, {"n": 167, "a": "CÓLON DESCENDENTE", "b": "RIM ESQUERDO", "type": "Pasteurella Bactéria", "page": 56}, {"n": 168, "a": "CÓLON DESCENDENTE", "b": "QUADRÍCEPS D. OU E.", "type": "Schistosomas Parasita", "page": 56}, {"n": 169, "a": "SIGMOIDES", "b": "RETO", "type": "R-40 Vírus", "page": 56}, {"n": 170, "a": "SIGMOIDES", "b": "XIFOIDES", "type": "Doença Fúngica Micose", "page": 56}, {"n": 171, "a": "SIGMOIDES", "b": "TESTÍCULO D. OU E.", "type": "Campylobacter Jejuni Doença Bacteriana", "page": 56}, {"n": 172, "a": "URETER D. OU E.", "b": "URETER CONTRALATERAL", "type": "Varicela Vírus", "page": 57}, {"n": 173, "a": "ÚTERO", "b": "OVÁRIO D. OU E.", "type": "Par Especial", "page": 57}, {"n": 174, "a": "ÚTERO", "b": "ÚTERO (HORIZONTAL, UM AO LADO DO OUTRO)", "type": "Par Especial", "page": 57}, {"n": 175, "a": "OVÁRIO D. OU E.", "b": "OVÁRIO CONTRALATERAL", "type": "Par Disfuncional", "page": 57}, {"n": 176, "a": "TROMPAS D. OU E.", "b": "OVÁRIO E. OU D.", "type": "Par Especial", "page": 57}, {"n": 177, "a": "TROMPAS D. OU E.", "b": "TROMPA CONTRALATERAL", "type": "Parvovírus Doença Viral", "page": 57}, {"n": 178, "a": "TESTÍCULO D. OU E.", "b": "TESTÍCULO CONTRALATERAL", "type": "Yersínia pestis Bactéria Ou disfunção glandular", "page": 58}, {"n": 179, "a": "CONDUTO ESPERMÁTICO D. OU E.", "b": "CONDUTO ESPERMÁTICO CONTRALATERAL", "type": "Tuberculose tipo 2 Mycobacterium", "page": 58}, {"n": 180, "a": "CONDUTO DEFERENTE", "b": "LARINGE", "type": "VSH Doença Viral", "page": 58}, {"n": 181, "a": "VAGINA", "b": "VAGINA (HORIZONTAL)", "type": "Yersínia pestis Bactéria Ou Reservatório", "page": 58}, {"n": 182, "a": "PRÓSTATA", "b": "PRÓSTATA (HORIZONTAL)", "type": "Disfunção da próstata", "page": 58}, {"n": 183, "a": "PRÓSTATA", "b": "RETO", "type": "Papiloma vírus Vírus", "page": 58}, {"n": 184, "a": "ÂNUS", "b": "ÂNUS (VERTICAL)", "type": "Papiloma humano Vírus", "page": 59}, {"n": 185, "a": "ÂNUS", "b": "PILORO", "type": "Levedura fungos Micelio intestinal", "page": 59}, {"n": 186, "a": "RETO", "b": "RETO (HORIZONTAL)", "type": "Pseudômona aeruginosa Bactéria", "page": 59}, {"n": 187, "a": "RETO", "b": "ÂNUS", "type": "Par Especial", "page": 59}, {"n": 188, "a": "RETO", "b": "SACRO", "type": "Trichomonas Doença Parasitária", "page": 59}, {"n": 189, "a": "CLITÓRIS", "b": "SACRO", "type": "Espiroqueta Bactéria", "page": 59}, {"n": 190, "a": "CECO", "b": "CECO (HORIZONTAL OU VERTICAL)", "type": "Trichomonas Parasita", "page": 60}, {"n": 191, "a": "CECO", "b": "RIM DIREITO", "type": "Trichomonas Parasita", "page": 60}, {"n": 192, "a": "CONTRA CECO", "b": "CONTRA CECO", "type": "Bordetella pertussis Bactéria", "page": 60}, {"n": 193, "a": "BEXIGA", "b": "BEXIGA (HORIZONTAL)", "type": "Estreptococo G Bactéria Ou Disfunção urinaria", "page": 60}, {"n": 194, "a": "BEXIGA", "b": "RETO", "type": "Herpes 7 Doença Viral", "page": 60}, {"n": 195, "a": "BEXIGA", "b": "ÂNUS", "type": "Enterococcus Doença Bacteriana", "page": 60}, {"n": 196, "a": "BEXIGA", "b": "VAGINA", "type": "Par Especial para mulher", "page": 60}, {"n": 197, "a": "URETRA", "b": "URETRA (VERTICAL)", "type": "Coronavírus Vírus Ou Reservatório Vírus", "page": 61}, {"n": 198, "a": "ESFÍNTER URETRAL D. OU E.", "b": "ESFÍNTER URETRAL E. OU D.", "type": "Raiva 3 Doença Viral", "page": 61}, {"n": 199, "a": "SUPRA PÚBICO", "b": "SUPRA PÚBICO (HORIZONTAL)", "type": "HTLV 2 Vírus", "page": 61}, {"n": 200, "a": "APÊNDICE", "b": "LÍNGUA D. OU E.", "type": "Varíola Vírus", "page": 61}, {"n": 201, "a": "APÊNDICE", "b": "PLEURA D. OU E.", "type": "Estafilococo áureo coagulasa+ Bactéria", "page": 61}, {"n": 202, "a": "APÊNDICE", "b": "TIMO", "type": "Par especial Ángeles", "page": 62}, {"n": 203, "a": "APÊNDICE", "b": "VEIA FEMORAL D. OU E.", "type": "Vaccínia Doença Viral", "page": 62}, {"n": 204, "a": "APÊNDICE", "b": "APÊNDICE (HORIZONTAL OU VERTICAL)", "type": "Disfunção", "page": 62}, {"n": 205, "a": "APÊNDICE", "b": "BEXIGA", "type": "Reservatório FAGOS", "page": 62}, {"n": 206, "a": "APÊNDICE", "b": "RIM ESQUERDO", "type": "BK 1 Doença Viral", "page": 62}, {"n": 207, "a": "SACO DE DOUGLAS D. OU E.", "b": "VEIA FEMORAL D. OU E.", "type": "Norwalk vírus Vírus", "page": 63}, {"n": 208, "a": "ANEXO D. OU E.", "b": "ANEXO CONTRALATERAL", "type": "Paramyxovirus Vírus", "page": 63}, {"n": 209, "a": "PUDENDO D. OU E.", "b": "PUDENDO CONTRALATERAL", "type": "Parotidites Vírus", "page": 63}, {"n": 210, "a": "NERVO INGUINAL D. E/OU E.", "b": "ARTICULAÇÕES (MESMO LADO)", "type": "Reumatismo Mono articular Par Especial", "page": 63}, {"n": 211, "a": "NERVO INGUINAL D. E/OU E.", "b": "FÍGADO", "type": "Roséola Vírus", "page": 63}, {"n": 212, "a": "NERVO INGUINAL D. E/OU E.", "b": "NERVO INGUINAL CONTRALATERAL", "type": "HTLV 1 Vírus", "page": 63}, {"n": 213, "a": "ADUTOR D. OU E.", "b": "ADUTOR E. OU D.", "type": "HIV 2 Vírus", "page": 64}, {"n": 214, "a": "TÍBIA D. OU E.", "b": "TÍBIA CONTRALATERAL", "type": "Malassezia furfur Micose – fungos.", "page": 64}, {"n": 215, "a": "TÍBIA D. OU E.", "b": "VÁLVULA ILEOCECAL", "type": "Cisticercose Doença Parasitária", "page": 64}, {"n": 216, "a": "FÍBULA D. OU E.", "b": "FÍBULA CONTRALATERAL ( OU MESMO LADO)", "type": "Proteus Mirabilis Bactéria", "page": 64}, {"n": 217, "a": "CALCÂNEO D. OU E.", "b": "CALCÂNEO CONTRALATERAL", "type": "Rickettsia Bactéria", "page": 64}, {"n": 218, "a": "AQUILES D. OU E.", "b": "AQUILES CONTRALATERAL", "type": "Shigella Bactéria", "page": 65}, {"n": 219, "a": "POPLÍTEO D. OU E.", "b": "POPLÍTEO CONTRALATERAL", "type": "Pneumococo Bactéria", "page": 65}, {"n": 220, "a": "LIGAMENTO EXTERNO DO JOELHO D E/OU E.", "b": "QUADRADO LOMBAR (MESMO LADO)", "type": "Streptococus Agalactie Bactéria", "page": 65}, {"n": 221, "a": "LIGAMENTO INTERNO DO JOLEHO D. OU E.", "b": "MALÉOLO INTERNO (MESMO LADO)", "type": "Microsporum Fungos", "page": 65}, {"n": 222, "a": "TENSOR DA FÁSCIA LATA D. E/OU E.", "b": "TENSOR DA FÁSCIA LATA E. OU D.", "type": "Gardnerella Vaginalis Bactéria", "page": 66}, {"n": 223, "a": "RETRO TENSOR D. OU E.", "b": "PEITORAL D. OU E.", "type": "Verruga Menor Doença Viral", "page": 66}, {"n": 224, "a": "RETRO TENSOR D. OU E.", "b": "RETRO TENSOR CONTRALATERAL", "type": "Doença Viral", "page": 66}, {"n": 225, "a": "TROCÁNTER MAIOR D. E/OU E.", "b": "TROCÁNTER MAIOR CONTRALATERAL", "type": "Salmonela tiphy Bactéria", "page": 66}, {"n": 226, "a": "TROCÁNTER MAIOR D. E/OU E.", "b": "TENSOR DA FÁSCIA LATA (MESMO LADO)", "type": "Blastomicose Doença Fúngica", "page": 67}, {"n": 227, "a": "TROCÁNTER MAIOR D. E/OU E.", "b": "RIM (MESMO LADO)", "type": "Bacilo paratifico Bactéria", "page": 67}, {"n": 228, "a": "TROCÁNTER MENOR D. OU E.", "b": "TROCÁNTER MENOR E. OU D.", "type": "VIH 4 Vírus", "page": 67}, {"n": 229, "a": "QUADRIL D. OU E.", "b": "QUADRIL CONTRALATERAL", "type": "Clamydia pneumoniae Bactéria", "page": 67}, {"n": 230, "a": "QUADRÍCEPS D. OU E.", "b": "QUADRÍCEPS E. OU D.", "type": "Intoxicação por bismuto Par especial", "page": 67}, {"n": 231, "a": "CIÁTICO D. OU E.", "b": "CIÁTICO E. OU D.", "type": "Pólio vírus Vírus", "page": 68}, {"n": 232, "a": "ÍSQUIO D. OU E.", "b": "ÍSQUIO E. OU D.", "type": "Onchocerca volvulus (Oncocercose) Parasita", "page": 68}, {"n": 233, "a": "FORAME CIÁTICO MAIOR D. OU E.", "b": "FORAME CIÁTICO MAIOR CONTRALATERAL", "type": "Moraxella catarrhalis (Neisseria) Doença Bacteriana", "page": 68}, {"n": 234, "a": "GLÚTEO D. OU E.", "b": "GLÚTEO E. OU D.", "type": "Taenia Saginata Parasita", "page": 68}, {"n": 235, "a": "PERI-HEPÁTICO", "b": "PERI-HEPÁTICO (AO LADO-HORIZONTAL)", "type": "Morganella tifo — Doença Bacteriana", "page": 49}]}; window.DATA=DATA; window.pairsCache=DATA.pairs.slice();
+const RES_N=new Set([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,138,197]);
+function resRank(n){return n===138?23.5:n===197?24:n}
+const TRACK={
+  reservatorios: DATA.pairs.filter(p=>RES_N.has(p.n)).sort((a,b)=>resRank(a.n)-resRank(b.n)).map(p=>({n:p.n,a:p.a,b:p.b})),
+  frontal: DATA.frontal,
+  posterior: DATA.posterior,
+  chakras: ["Chakra 1 — Muladhara (Períneo)","Chakra 2 — Svadhisthana (Abaixo do umbigo)","Chakra 3 — Manipura (Abdome superior)","Chakra 4 — Anahata (Centro do peito)","Chakra 5 — Vishuda (Centro do pescoço)","Chakra 6 — Ajna (Meio da testa)","Chakra 7 — Saharara (Topo da cabeça)","Chakra 8 — Meio da nuca (Bulbo raquídeo)","Chakra 9 — Final da medula (cauda equina)"],
+  cromossomos: Array.from({length:23},(_,i)=>'Cromossomo '+(i+1))
+};
+const TRACK_ORDER=['reservatorios','frontal','posterior','chakras','cromossomos'];
+function nextTrackMode(){
+  const i=TRACK_ORDER.indexOf(mode);
+  if(i<0 || i>=TRACK_ORDER.length-1) return null;
+  const n=TRACK_ORDER[i+1];
+  return TRACK[n] && TRACK[n].length ? n : null;
+}
+let mode='reservatorios',idx=-1,selected=null,timers=[]; const synth=window.speechSynthesis; let voices=[]; let selectedVoice=null; let audioUnlocked=false; let autoRunning=false, autoTimer=null, intervalSec=8, speechRate=.82, speaking=false;
+const NAME_STORE='biomagnetismo.nomePontos.v1';
+function loadNameMap(){try{return JSON.parse(localStorage.getItem(NAME_STORE)||'{}')||{}}catch(e){return {}}}
+function persistNameMap(){try{localStorage.setItem(NAME_STORE,JSON.stringify(nameMap))}catch(e){}}
+let nameMap=loadNameMap();
+function trackItem(i){const list=TRACK[mode]||[];return list[i==null?idx:i]}
+function itemKey(i){
+  const it=trackItem(i);
+  if(it==null)return '';
+  if(mode==='reservatorios') return 'reservatorios:'+it.n;
+  return mode+':'+it;
+}
+function originalLabel(i){
+  const it=trackItem(i);
+  if(it==null)return '';
+  if(mode==='reservatorios') return it.a+' ↔ '+it.b;
+  return it;
+}
+function displayParts(i){
+  const it=trackItem(i);
+  const ov=nameMap[itemKey(i)]||{};
+  if(mode==='reservatorios') return {a:(ov.a&&ov.a.trim())||it.a, b:(ov.b&&ov.b.trim())||it.b};
+  return {label:(ov.label&&ov.label.trim())||it};
+}
+function displayLabel(i){
+  if(mode==='reservatorios'){const p=displayParts(i);return p.a+' ↔ '+p.b}
+  return displayParts(i).label;
+}
+function hasOverride(i){
+  const ov=nameMap[itemKey(i)];
+  if(!ov)return false;
+  const it=trackItem(i);
+  if(mode==='reservatorios') return (ov.a&&ov.a.trim()!==it.a)||(ov.b&&ov.b.trim()!==it.b);
+  return ov.label&&ov.label.trim()!==it;
+}
+function arr(){const list=TRACK[mode]||[];return list.map((_,i)=>displayLabel(i))}
+function savePointName(){
+  if(idx<0)return;
+  const k=itemKey(idx);
+  const it=trackItem(idx);
+  if(mode==='reservatorios'){
+    const a=(document.getElementById('editPontoA')?.value||'').trim();
+    const b=(document.getElementById('editPontoB')?.value||'').trim();
+    if(!a||!b){alert('Ponto A e Ponto B não podem ficar vazios.');return}
+    if(a===it.a && b===it.b) delete nameMap[k];
+    else nameMap[k]={a,b};
+  }else{
+    const label=(document.getElementById('editPontoNome')?.value||'').trim();
+    if(!label){alert('O nome do ponto não pode ficar vazio.');return}
+    if(label===it) delete nameMap[k];
+    else nameMap[k]={label};
+  }
+  persistNameMap();
+  render();
+}
+function resetPointName(){
+  if(idx<0)return;
+  delete nameMap[itemKey(idx)];
+  persistNameMap();
+  render();
+}
+function resetListPointNames(){
+  const prefix=mode+':';
+  Object.keys(nameMap).forEach(k=>{if(k.startsWith(prefix)) delete nameMap[k]});
+  persistNameMap();
+  render();
+}
+function renderNameEdit(){
+  const box=document.getElementById('nameEdit');
+  const fields=document.getElementById('nameEditFields');
+  const origEl=document.getElementById('nameEditOrig');
+  if(!box||!fields||!origEl)return;
+  if(idx<0){box.hidden=true;return}
+  box.hidden=false;
+  origEl.textContent=(hasOverride(idx)?'Nome original: ':'Original: ')+originalLabel(idx);
+  if(mode==='reservatorios'){
+    const p=displayParts(idx);
+    fields.innerHTML='<label for="editPontoA">Ponto A</label><input id="editPontoA" autocomplete="off" onkeydown="if(event.key===\'Enter\')savePointName()"><label for="editPontoB">Ponto B</label><input id="editPontoB" autocomplete="off" onkeydown="if(event.key===\'Enter\')savePointName()">';
+    document.getElementById('editPontoA').value=p.a;
+    document.getElementById('editPontoB').value=p.b;
+  }else{
+    const p=displayParts(idx);
+    fields.innerHTML='<label for="editPontoNome">Nome do ponto</label><input id="editPontoNome" autocomplete="off" onkeydown="if(event.key===\'Enter\')savePointName()">';
+    document.getElementById('editPontoNome').value=p.label;
+  }
+}
+function loadVoices(){
+  voices=synth?synth.getVoices():[];
+  selectedVoice=voices.find(v=>/^pt-BR$/i.test(v.lang))
+    ||voices.find(v=>/pt[-_]BR/i.test(v.lang))
+    ||voices.find(v=>/luciana|fernanda|joana|google português do brasil/i.test(v.name||''))
+    ||voices.find(v=>/^pt/i.test(v.lang))
+    ||voices[0]
+    ||null;
+  const el=document.getElementById('audioStatus');
+  if(el && voices.length) el.textContent='Voz disponível: '+(selectedVoice?selectedVoice.name:'voz padrão')+'.';
+}
+if(synth){synth.onvoiceschanged=loadVoices; loadVoices();}
+let audioCtx=null, keepAliveOsc=null, speakWatch=null;
+function keepAudioAlive(){
+  try{
+    const C=window.AudioContext||window.webkitAudioContext;
+    if(!C)return;
+    if(!audioCtx) audioCtx=new C();
+    if(audioCtx.state==='suspended') audioCtx.resume();
+    if(keepAliveOsc)return;
+    const o=audioCtx.createOscillator();
+    const g=audioCtx.createGain();
+    o.frequency.value=1;
+    g.gain.value=0.00008;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start();
+    keepAliveOsc=o;
+  }catch(e){}
+}
+function finishSpeak(after){
+  if(speakWatch){clearTimeout(speakWatch);speakWatch=null}
+  speaking=false;
+  if(after) after();
+}
+function speak(t, after){
+  let done=false;
+  const end=()=>{if(done)return; done=true; finishSpeak(after)};
+  if(!synth){
+    const el=document.getElementById('audioStatus');
+    if(el) el.textContent='Este navegador não disponibiliza fala. No iPhone use o Safari; no Android ou PC use o Chrome.';
+    end();
+    return;
+  }
+  try{
+    keepAudioAlive();
+    if(synth.paused) synth.resume();
+    synth.cancel();
+    const u=new SpeechSynthesisUtterance(String(t));
+    u.lang='pt-BR';
+    u.voice=selectedVoice||null;
+    u.rate=speechRate;
+    u.pitch=1;
+    u.volume=1;
+    u.onstart=()=>{speaking=true;document.getElementById('audioStatus').textContent='🔊 Falando: '+t};
+    u.onend=end;
+    u.onerror=()=>{document.getElementById('audioStatus').textContent='Erro de voz.'; end()};
+    const wait=Math.max(2500, Math.ceil(String(t).length*90/Math.max(speechRate,0.5))+800);
+    speakWatch=setTimeout(end, wait);
+    setTimeout(()=>{try{if(synth.paused) synth.resume(); synth.speak(u)}catch(e){end()}}, 60);
+  }catch(e){
+    document.getElementById('audioStatus').textContent='Erro de áudio: '+e.message;
+    end();
+  }
+}
+function unlockAudio(){
+  audioUnlocked=true;
+  keepAudioAlive();
+  try{if(synth){synth.resume();loadVoices(); speak('Áudio ativado.');} }catch(e){}
+}
+function testSound(){unlockAudio(); setTimeout(()=>speak('Som de teste. Pineal. Pré-pineal. Pós-pineal.'),100)}
+function testBeep(){try{const C=window.AudioContext||window.webkitAudioContext; if(!C){alert('Seu navegador não suporta o sinal de áudio.');return} const c=new C(); const o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.value=.15;o.connect(g);g.connect(c.destination);o.start();setTimeout(()=>{o.stop();c.close()},250);document.getElementById('audioStatus').textContent='🔔 Sinal de áudio emitido.';}catch(e){alert('Não foi possível emitir o sinal: '+e.message)}}
+function render(){
+  let a=arr();
+  document.getElementById('point').textContent=idx<0?'Pressione INICIAR':a[idx];
+  document.getElementById('progress').textContent=(idx<0?0:idx+1)+' / '+a.length;
+  document.getElementById('pointList').innerHTML=a.map((x,i)=>'<button onclick="gotoPoint('+i+')">'+(i+1)+'. '+esc(x)+(hasOverride(i)?' ✎':'')+'</button>').join('');
+  document.querySelectorAll('.tabs [data-mode]').forEach(btn=>{
+    btn.classList.toggle('active', btn.getAttribute('data-mode')===mode);
+  });
+  const hint=document.getElementById('pointHint');
+  if(hint){
+    hint.textContent=mode==='chakras'?'Invocação: Alinha-te':mode==='cromossomos'?'Invocação: Cura-te ou Equilibra-te':'';
+  }
+  const resBtn=document.getElementById('resonanceBtn');
+  if(resBtn){
+    resBtn.style.display=(mode==='chakras'||mode==='cromossomos')?'none':'';
+  }
+  document.getElementById('autoBtn').textContent=autoRunning?'⏸ Pausar automático':'▶ Continuar automático';
+  document.getElementById('autoBtn').classList.toggle('auto-running',autoRunning);
+  renderNameEdit();
+}
+function setMode(m){pauseAuto();mode=m;idx=-1;render()}
+function start(){if(idx<0)idx=0;render();speakCurrent()}
+function gotoPoint(i){pauseAuto();idx=i;render();speakCurrent()}
+function next(){if(idx<0)idx=0;else if(idx<arr().length-1)idx++;render();speakCurrent()}
+function prev(){pauseAuto();if(idx<0)idx=0;else idx=Math.max(0,idx-1);render();speakCurrent()}
+function repeatSpeech(){if(idx>=0)speakCurrent()}
+function stopGuide(){pauseAuto();if(synth)synth.cancel();idx=-1;render()}
+function toggleAuto(){if(autoRunning)pauseAuto();else startAuto()}
+let wakeLock=null;
+async function requestWakeLock(){
+  try{
+    if('wakeLock' in navigator){
+      wakeLock=await navigator.wakeLock.request('screen');
+    }
+  }catch(e){}
+}
+function releaseWakeLock(){
+  try{wakeLock&&wakeLock.release()}catch(e){}
+  wakeLock=null;
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'){
+    try{if(audioCtx&&audioCtx.state==='suspended') audioCtx.resume()}catch(e){}
+    if(autoRunning) requestWakeLock();
+  }
+});
+function startAuto(){if(idx<0)idx=0;if(idx>=arr().length-1){idx=0} autoRunning=true;keepAudioAlive();requestWakeLock();render();speakCurrent(scheduleNext)}
+function pauseAuto(){autoRunning=false;releaseWakeLock();if(autoTimer){clearTimeout(autoTimer);autoTimer=null}render()}
+function scheduleNext(){
+  if(!autoRunning)return;
+  autoTimer=setTimeout(()=>{
+    autoTimer=null;
+    if(!autoRunning)return;
+
+    if(idx<arr().length-1){
+      idx++;
+      render();
+      speakCurrent(scheduleNext);
+      return;
+    }
+
+    const nextMode=nextTrackMode();
+    if(nextMode){
+      mode=nextMode;
+      idx=0;
+      render();
+      speakCurrent(scheduleNext);
+      return;
+    }
+
+    autoRunning=false;
+    releaseWakeLock();
+    render();
+  },intervalSec*1000)
+}
+function updateInterval(){intervalSec=Number(document.getElementById('interval').value);document.getElementById('intervalLabel').textContent=intervalSec+' s'}
+function updateSpeechRate(){speechRate=Number(document.getElementById('speechRate').value);let n=speechRate<.7?'mais lenta':speechRate<.82?'lenta':speechRate<.93?'normal':speechRate<1.03?'rápida':'mais rápida';document.getElementById('speechLabel').textContent=n}
+function openResonance(){
+  pauseAuto();
+  if(idx<0)return;
+  const it=trackItem(idx);
+  const q=mode==='reservatorios'?it.a:it;
+  document.getElementById('search').value=q;
+  searchPairs();
+  document.getElementById('search').focus();
+}
+function norm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase()}
+function normPoint(s){
+  return norm(s)
+    .replace(/\bD\s*\.?(?:\s+OU\s+|\s*\/\s*)E\s*\.?\b/g,' ')
+    .replace(/\bDIREITA\s+OU\s+ESQUERDA\b/g,' ')
+    .replace(/\bDIREITO\s+OU\s+ESQUERDO\b/g,' ')
+    .replace(/\bDIREITA\b|\bESQUERDA\b|\bDIREITO\b|\bESQUERDO\b/g,' ')
+    .replace(/\bD\.?\b|\bE\.?\b/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function pairCaption(p){return (p.n!=null?'#'+p.n+' — ':'')+p.a+' ↔ '+p.b}
+function pairInfo(p){
+  const extra=(window.PARES_INFO && p && p.n!=null)?(window.PARES_INFO[p.n]||window.PARES_INFO[String(p.n)]||null):null;
+  return {
+    microorganismo:(extra&&extra.microorganismo)||p.microorganismo||p.type||'',
+    sintoma:(extra&&extra.sintoma)||p.sintoma||p.descricao||''
+  };
+}
+function pairDetailsHtml(p){
+  if(!p)return '';
+  const {microorganismo,sintoma}=pairInfo(p);
+  let html='';
+  if(microorganismo) html+='<div class="small"><b>Microrganismo:</b> '+esc(microorganismo)+'</div>';
+  if(sintoma) html+='<div class="small"><b>Sintomas:</b> '+esc(sintoma)+'</div>';
+  return html?'<div class="pair-meta">'+html+'</div>':'';
+}
+const LATERALITY_RE=/\b(?:DIREITA\s+OU\s+ESQUERDA|DIREITO\s+OU\s+ESQUERDO|D\s*\.?\s*(?:E\s*\/\s*)?OU\s+E\s*\.?|E\s*\.?\s*OU\s+D\s*\.?|D\s*\.?\s*E\/OU\s+E\s*\.?)\b/gi;
+function hasLaterality(s){
+  LATERALITY_RE.lastIndex=0;
+  return LATERALITY_RE.test(String(s||''));
+}
+function stripLaterality(s){
+  return String(s||'')
+    .replace(LATERALITY_RE,' ')
+    .replace(/\bLADO\b/gi,' ')
+    .replace(/\(\s*\)/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function spokenPhrase(s){
+  const t=String(s||'').replace(/\s+/g,' ').trim();
+  if(!t)return t;
+  return t.charAt(0).toUpperCase()+t.slice(1).toLowerCase();
+}
+function speakCurrent(after){
+  const t=arr()[idx];
+  if(!t){if(after)after();return}
+  if(mode==='reservatorios' && t.indexOf('↔')>=0){
+    const parts=t.split('↔').map(s=>s.trim());
+    return speak(spokenPhrase(parts[0])+'. '+spokenPhrase(parts[1])+'.', after);
+  }
+  speak(t, after);
+}
+function lateralityGender(base){
+  const n=normPoint(base);
+  const lists=[...(DATA.frontal||[]), ...(DATA.posterior||[])];
+  for(const p of lists){
+    if(normPoint(p)!==n) continue;
+    if(/DIREITA\s+OU\s+ESQUERDA/i.test(p)) return 'f';
+    if(/DIREITO\s+OU\s+ESQUERDO/i.test(p)) return 'm';
+  }
+  return 'm';
+}
+function complementarySpoken(other){
+  const raw=String(other||'').trim();
+  if(!hasLaterality(raw)) return [spokenPhrase(raw)];
+  const base=stripLaterality(raw);
+  const gender=lateralityGender(base);
+  const right=gender==='f'?'direita':'direito';
+  const left=gender==='f'?'esquerda':'esquerdo';
+  return [spokenPhrase(base+' '+right), spokenPhrase(base+' '+left)];
+}
+function resonanceParts(p){
+  const search=(document.getElementById('search')?.value||'').trim();
+  const q=normPoint(search);
+  const aMatch=!!q && (normPoint(p.a)===q || normPoint(p.a).includes(q));
+  const bMatch=!!q && (normPoint(p.b)===q || normPoint(p.b).includes(q));
+  let foundRaw, other;
+  if(bMatch && !aMatch){
+    foundRaw=search || p.b;
+    other=p.a;
+  }else{
+    foundRaw=search || p.a;
+    other=p.b;
+  }
+  const found=spokenPhrase(stripLaterality(foundRaw) || foundRaw);
+  return {found, others: complementarySpoken(other)};
+}
+function speakPairQuestions(phrases){
+  if(!synth){
+    document.getElementById('audioStatus').textContent='Este navegador não disponibiliza fala. Use Chrome ou Edge.';
+    return;
+  }
+  try{
+    synth.cancel();
+    synth.resume();
+    const list=phrases.filter(Boolean);
+    list.forEach((text,i)=>{
+      const u=new SpeechSynthesisUtterance(text);
+      u.lang='pt-BR';
+      u.voice=selectedVoice||null;
+      u.rate=speechRate;
+      u.pitch=1.08;
+      u.volume=1;
+      if(i===0){
+        u.onstart=()=>{speaking=true;document.getElementById('audioStatus').textContent='🔊 Falando: '+list.join(' ')};
+      }
+      if(i===list.length-1){
+        u.onend=()=>{speaking=false};
+      }
+      u.onerror=(e)=>{speaking=false;document.getElementById('audioStatus').textContent='Erro de voz: '+(e.error||'desconhecido')};
+      synth.speak(u);
+    });
+  }catch(e){
+    document.getElementById('audioStatus').textContent='Erro de áudio: '+e.message;
+  }
+}
+function speakResonancePair(p){
+  const {found, others}=resonanceParts(p);
+  speakPairQuestions(others.map(other=>found+', '+other+'?'));
+}
+function searchPairs(){
+  const raw=document.getElementById('search').value.trim();
+  const q=normPoint(raw);
+  let out=window.pairsCache.filter(p=>{
+    if(!q)return true;
+    const a=normPoint(p.a), b=normPoint(p.b);
+    return a===q || a.includes(q) || b===q || b.includes(q);
+  }).slice(0,80);
+  document.getElementById('results').innerHTML=out.length?out.map((p,i)=>`<div class="result"><b>${esc(pairCaption(p))}</b>${pairDetailsHtml(p)}<div class="row"><button class="secondary" onclick='selectPair(${JSON.stringify({n:p.n,a:p.a,b:p.b,type:p.type}).replace(/'/g,"&apos;")})'>Selecionar</button><button class="secondary" onclick='speakResonancePair(${JSON.stringify({n:p.n,a:p.a,b:p.b,type:p.type}).replace(/'/g,"&apos;")})'>🔊 Falar ponto</button></div></div>`).join(''):'<div class="small">Nenhum par encontrado.</div>'}
+function selectPair(p){
+  selected=p;
+  document.getElementById('selectedInfo').innerHTML='<b>Selecionado:</b> '+esc(pairCaption(p))+pairDetailsHtml(p);
+  speakResonancePair(p);
+}
+function activateSelected(){
+  if(!selected){alert('Selecione um par primeiro.');return}
+  const id=Date.now();
+  const now=Date.now();
+  const label=selected.a+' ↔ '+selected.b;
+  timers.push({id,p:selected,label:label,start:now,end:now+40*60*1000,notified:false});
+  renderTimers();
+  renderHistory();
+  selected=null;
+  document.getElementById('selectedInfo').textContent='Par ativado por 40 minutos. Faça o posicionamento conforme seu procedimento.';
+}
+function fmt(ms){let s=Math.max(0,Math.floor(ms/1000)),m=Math.floor(s/60),sec=s%60;return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0')}
+function clockTime(ts){return new Date(ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
+function notifyFinished(t){
+  if(t.notified)return;
+  t.notified=true;
+  // Aviso discreto por voz; não interfere na busca nem no rastreio.
+  if(synth) speak('Tempo de 40 minutos encerrado. Par '+t.label+'.');
+  try{
+    const Ctx=window.AudioContext||window.webkitAudioContext;
+    if(Ctx){
+      const ctx=new Ctx(),o=ctx.createOscillator(),g=ctx.createGain();
+      o.frequency.value=880;g.gain.value=.08;o.connect(g);g.connect(ctx.destination);
+      o.start();o.stop(ctx.currentTime+.35);
+    }
+  }catch(e){}
+}
+function renderTimers(){
+  const el=document.getElementById('timers');
+  const now=Date.now();
+  timers.forEach(t=>{if(now>=t.end)notifyFinished(t)});
+  el.innerHTML=timers.length?timers.map(t=>{
+    const done=t.end<=now;
+    return `<div class="timer ${done?'done':''}">
+      <b>${esc(t.label)}</b>
+      ${pairDetailsHtml(t.p)}
+      <div class="small">Início: ${clockTime(t.start)}</div>
+      <div class="time">${done?'00:00':fmt(t.end-now)}</div>
+      <div class="row"><button class="secondary" onclick="removeTimer(${t.id})">${done?'Encerrar':'Encerrar'}</button></div>
+    </div>`;
+  }).join(''):'<div class="small">Nenhum par ativo.</div>';
+}
+function renderHistory(){
+  const el=document.getElementById('history');
+  if(!el)return;
+  const now=Date.now();
+  const ordered=timers.slice().sort((a,b)=>b.start-a.start);
+  el.innerHTML=ordered.length?ordered.map(t=>{
+    const done=t.end<=now;
+    return `<div class="item">
+      <b>${esc(t.label)}</b>
+      ${pairDetailsHtml(t.p)}
+      <div class="small">Início: ${clockTime(t.start)} · ${done?'⏱️ 40 minutos concluídos':'⏳ em andamento — '+fmt(t.end-now)}</div>
+    </div>`;
+  }).join(''):'<div class="small">Nenhum par registrado nesta sessão.</div>';
+}
+function removeTimer(id){timers=timers.filter(t=>t.id!==id);renderTimers();renderHistory()}
+setInterval(()=>{renderTimers();renderHistory()},1000);
+render();renderTimers();renderHistory();
+if('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost' || location.hostname==='127.0.0.1')){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+
+</script>
+<div id="authModal" class="modal">
+  <div class="modal-box" role="dialog" aria-labelledby="authTitle">
+    <div id="authViewLogin" class="auth-view">
+      <h3 id="authTitle">Entrar</h3>
+      <label for="authEmail">E-mail</label>
+      <input id="authEmail" type="email" autocomplete="username">
+      <label for="authPassword">Senha</label>
+      <input id="authPassword" type="password" autocomplete="current-password">
+      <button type="button" class="auth-link" id="authForgotLink">Esqueci minha senha</button>
+      <div class="row">
+        <button type="button" id="authLogin">Entrar</button>
+        <button type="button" class="secondary" id="authCancel">Cancelar</button>
+      </div>
+    </div>
+    <div id="authViewForgot" class="auth-view" hidden>
+      <h3>Esqueci minha senha</h3>
+      <p class="small">Informe o e-mail da conta. Se ele estiver cadastrado, você receberá um link de recuperação.</p>
+      <label for="authForgotEmail">E-mail</label>
+      <input id="authForgotEmail" type="email" autocomplete="username">
+      <div class="row">
+        <button type="button" id="authForgotSend">Enviar link</button>
+        <button type="button" class="secondary" id="authForgotBack">Voltar</button>
+      </div>
+    </div>
+    <div id="authViewReset" class="auth-view" hidden>
+      <h3>Definir nova senha</h3>
+      <p class="small">Digite a nova senha para esta conta. Não há cadastro público neste aplicativo.</p>
+      <label for="authNewPassword">Nova senha</label>
+      <input id="authNewPassword" type="password" autocomplete="new-password">
+      <label for="authNewPasswordConfirm">Confirmar senha</label>
+      <input id="authNewPasswordConfirm" type="password" autocomplete="new-password">
+      <div class="row">
+        <button type="button" class="green" id="authSavePassword">Salvar senha</button>
+        <button type="button" class="secondary" id="authResetCancel">Cancelar</button>
+      </div>
+    </div>
+    <div id="authError"></div>
+    <div id="authMessage"></div>
+  </div>
+</div>
+<div id="adminParModal" class="modal">
+  <div class="modal-box" role="dialog" aria-labelledby="adminParTitle">
+    <h3 id="adminParTitle">Par Biomagnético</h3>
+    <div class="small" id="adminOrigemInfo"></div>
+    <label for="adminPontoA">Ponto A</label>
+    <input id="adminPontoA" autocomplete="off">
+    <label for="adminPontoB">Ponto B</label>
+    <input id="adminPontoB" autocomplete="off">
+    <label for="adminCategoria">Categoria</label>
+    <input id="adminCategoria" autocomplete="off">
+    <label for="adminDescricao">Descrição</label>
+    <input id="adminDescricao" autocomplete="off">
+    <label for="adminObservacao">Observação</label>
+    <input id="adminObservacao" autocomplete="off">
+    <div class="row">
+      <button type="button" class="green" id="adminParSave">Salvar</button>
+      <button type="button" class="secondary" id="adminParCancel">Cancelar</button>
+    </div>
+    <div id="adminParError"></div>
+  </div>
+</div>
+<script type="module">
+import { fetchParesWithFallback } from './js/pares-service.js';
+import { initAuth } from './js/auth.js';
+import { initAdminPares, onAuthSession } from './js/admin-pares.js';
+import { PARES_INFO } from './js/pares-info.js';
+
+window.PARES_INFO = PARES_INFO;
+
+async function refreshPublicPares() {
+  const localPairs = window.DATA && window.DATA.pairs ? window.DATA.pairs : [];
+  const result = await fetchParesWithFallback(localPairs);
+  window.pairsCache = result.pairs;
+  if (typeof window.searchPairs === 'function') window.searchPairs();
+}
+
+initAdminPares({ onParesChanged: refreshPublicPares });
+initAuth(onAuthSession);
+refreshPublicPares();
+</script></body></html>
