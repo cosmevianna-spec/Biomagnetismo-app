@@ -188,18 +188,69 @@ function renderNameEdit(){
     document.getElementById('editPontoNome').value=p.label;
   }
 }
+function foldVoiceName(s){
+  return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+}
+function voiceLang(v){
+  return String(v&&v.lang||'').replace(/_/g,'-');
+}
+function isPtBR(v){return /^pt-BR$/i.test(voiceLang(v))}
+function isPt(v){return /^pt\b/i.test(voiceLang(v))}
+function voiceQualityBonus(v){
+  const n=foldVoiceName(v.name);
+  if(/natural|neural|online/.test(n)) return 30;
+  return 0;
+}
+function preferredPtBrRank(v){
+  const n=foldVoiceName(v.name);
+  const names=['francisca','antonio','maria'];
+  const i=names.findIndex(p=>n.includes(p));
+  return i<0?null:i;
+}
+function scorePtBrVoice(v){
+  const n=foldVoiceName(v.name);
+  const pref=preferredPtBrRank(v);
+  let s=voiceQualityBonus(v);
+  if(pref!=null) s+=100-pref*10;
+  else if(/microsoft/.test(n)) s+=40;
+  else s+=10;
+  return s;
+}
+function bestOf(list, scoreFn){
+  if(!list.length) return null;
+  return list.slice().sort((a,b)=>{
+    const d=scoreFn(b)-scoreFn(a);
+    if(d) return d;
+    return foldVoiceName(a.name).localeCompare(foldVoiceName(b.name),'pt');
+  })[0];
+}
+function pickBestVoice(list){
+  if(!list||!list.length) return null;
+  return bestOf(list.filter(isPtBR), scorePtBrVoice)
+    || bestOf(list.filter(v=>isPt(v)&&!isPtBR(v)), voiceQualityBonus)
+    || list[0]
+    || null;
+}
+function listAvailableVoices(){
+  return (synth?synth.getVoices():[]).map(v=>({
+    name:v.name,
+    lang:v.lang,
+    default:!!v.default,
+    localService:v.localService!==false
+  }));
+}
 function loadVoices(){
   voices=synth?synth.getVoices():[];
-  selectedVoice=voices.find(v=>/^pt-BR$/i.test(v.lang))
-    ||voices.find(v=>/pt[-_]BR/i.test(v.lang))
-    ||voices.find(v=>/luciana|fernanda|joana|google português do brasil/i.test(v.name||''))
-    ||voices.find(v=>/^pt/i.test(v.lang))
-    ||voices[0]
-    ||null;
+  selectedVoice=pickBestVoice(voices);
   const el=document.getElementById('audioStatus');
   if(el && voices.length) el.textContent='Voz disponível: '+(selectedVoice?selectedVoice.name:'voz padrão')+'.';
 }
-if(synth){synth.onvoiceschanged=loadVoices; loadVoices();}
+if(synth){
+  if(typeof synth.addEventListener==='function') synth.addEventListener('voiceschanged', loadVoices);
+  else synth.onvoiceschanged=loadVoices;
+  loadVoices();
+}
+window.listAvailableVoices=listAvailableVoices;
 let audioCtx=null, keepAliveOsc=null, speakWatch=null;
 function keepAudioAlive(){
   try{
