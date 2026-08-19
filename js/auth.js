@@ -1,4 +1,4 @@
-import { supabase } from './supabase-client.js';
+import { supabase, recoveryFromUrl } from './supabase-client.js';
 
 const VIEWS = {
   login: 'authViewLogin',
@@ -82,13 +82,22 @@ function closeModal() {
 function isRecoveryRedirect() {
   const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
   const query = new URLSearchParams(window.location.search);
-  return hash.get('type') === 'recovery' || query.get('type') === 'recovery';
+  return (
+    recoveryFromUrl ||
+    hash.get('type') === 'recovery' ||
+    query.get('type') === 'recovery' ||
+    query.get('reset') === '1'
+  );
 }
 
 function clearRecoveryUrl() {
   if (!window.history || !window.history.replaceState) return;
-  const url = `${window.location.pathname}${window.location.search}`;
-  window.history.replaceState({}, document.title, url || '/');
+  const url = new URL(window.location.href);
+  url.searchParams.delete('reset');
+  url.searchParams.delete('code');
+  url.hash = '';
+  const next = `${url.pathname}${url.search}`;
+  window.history.replaceState({}, document.title, next || '/');
 }
 
 async function login() {
@@ -195,6 +204,7 @@ async function saveNewPassword() {
       return;
     }
     clearRecoveryUrl();
+    setAuthMessage('Senha atualizada.');
     closeModal();
   } finally {
     if (saveBtn) saveBtn.disabled = false;
@@ -267,14 +277,6 @@ export async function initAuth(onChange) {
     return;
   }
 
-  const { data } = await supabase.auth.getSession();
-  setSessionUi(data.session);
-  if (onChange) onChange(data.session);
-
-  if (isRecoveryRedirect()) {
-    openResetView();
-  }
-
   supabase.auth.onAuthStateChange((event, session) => {
     setSessionUi(session);
     if (event === 'PASSWORD_RECOVERY') {
@@ -282,6 +284,14 @@ export async function initAuth(onChange) {
     }
     if (onChange) onChange(session);
   });
+
+  const { data } = await supabase.auth.getSession();
+  setSessionUi(data.session);
+  if (onChange) onChange(data.session);
+
+  if (isRecoveryRedirect()) {
+    openResetView();
+  }
 }
 
 export async function getSession() {

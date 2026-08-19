@@ -9,6 +9,21 @@ function isConfigured(url, key) {
   );
 }
 
+/** Lido antes do cliente consumir o hash/query do link de recuperação. */
+export function readRecoveryFromUrl() {
+  if (typeof window === 'undefined') return false;
+  const hash = new URLSearchParams(String(window.location.hash || '').replace(/^#/, ''));
+  const query = new URLSearchParams(window.location.search || '');
+  return (
+    hash.get('type') === 'recovery' ||
+    query.get('type') === 'recovery' ||
+    query.get('reset') === '1' ||
+    Boolean(query.get('code'))
+  );
+}
+
+export const recoveryFromUrl = readRecoveryFromUrl();
+
 async function createSupabase() {
   try {
     const cfg = await import('./config.js');
