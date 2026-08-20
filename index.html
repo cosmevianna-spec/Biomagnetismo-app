@@ -105,6 +105,24 @@ input:focus,select.admin-select:focus{outline:2px solid var(--blue);outline-offs
 .auto-controls input[type=range]{width:100%;padding:0;accent-color:var(--blue)}
 .auto-running{outline:2px solid var(--blue)}
 .list{max-height:330px;overflow:auto;margin-top:10px}
+.point-list-panel{margin-top:10px}
+.point-list-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.point-list-count{flex-shrink:0;margin:0}
+.point-list-toggle{
+  background:transparent!important;border:0;border-radius:8px;padding:8px 10px;min-height:44px;
+  font-size:12px;font-weight:600;color:inherit;cursor:pointer;box-shadow:none;width:auto;
+  display:inline-flex;align-items:center;gap:6px;margin-left:auto;
+}
+.point-list-toggle:hover{background:rgba(15,23,42,.06)!important}
+.point-list-chevron{display:inline-block;width:1em;text-align:center}
+.point-list-body{
+  transition:max-height .25s ease,opacity .2s ease,margin-top .25s ease,padding .25s ease,border-color .25s ease;
+}
+.point-list-panel:not(.is-open) .point-list-body{
+  max-height:0!important;overflow:hidden;margin-top:0!important;padding-top:0!important;
+  padding-bottom:0!important;border-color:transparent!important;opacity:0;
+}
+.point-list-panel.is-open .point-list-body{max-height:330px;opacity:1;margin-top:10px}
 .list button{display:block;width:100%;text-align:left;margin:5px 0;background:#EFF6FF;color:#1E3A8A}
 .list button:hover{background:#DBEAFE}
 .name-edit{margin-top:12px}
@@ -127,6 +145,8 @@ input:focus,select.admin-select:focus{outline:2px solid var(--blue);outline-offs
   background:#0F141B;border-color:#334155;color:#F8FAFC;
 }
 .grid>section:first-child .list{background:#0F141B;border-radius:12px;padding:6px 8px;border:1px solid #1E293B}
+.grid>section:first-child .point-list-toggle{color:#CBD5E1}
+.grid>section:first-child .point-list-toggle:hover{background:#1E2937!important}
 .grid>section:first-child .list button{
   background:transparent;color:#F8FAFC;border-radius:8px;margin:0;padding:10px 8px;
   box-shadow:inset 0 -1px 0 #1E293B;
@@ -219,6 +239,7 @@ footer::before{content:"❤ ";color:var(--green)}
   .header-actions{width:100%;justify-content:flex-end}
   .header-actions button{min-height:40px;padding:10px 12px;font-size:14px}
   .results,.list,.admin-list{max-height:none}
+  .point-list-panel.is-open .point-list-body{max-height:min(280px,38vh)!important}
   .admin-toolbar input{min-width:0;width:100%}
   footer{padding:8px max(12px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
 }
@@ -260,7 +281,13 @@ footer::before{content:"❤ ";color:var(--green)}
   <div class="row"><button class="secondary" onclick="unlockAudio()">🔊 Ativar áudio</button><button class="secondary" onclick="testSound()">🎧 Testar voz</button><button class="secondary" onclick="testBeep()">🔔 Testar sinal</button><span class="small" style="align-self:center">Toque em “Ativar áudio” antes de iniciar. No iPhone use o Safari; no Android use o Chrome.</span></div><div class="small" id="audioStatus" style="margin-top:8px">Áudio ainda não ativado.</div>
 </div>
 <div class="row"><button class="red" id="resonanceBtn" onclick="openResonance()">🔎 Encontrei este ponto — buscar ressonâncias</button></div>
-<div class="small" id="progress">0 / 0</div><div class="list" id="pointList"></div>
+<div class="point-list-panel" id="pointListPanel">
+  <div class="point-list-head">
+    <span class="small point-list-count" id="progress">0 / 0</span>
+    <button type="button" class="point-list-toggle" id="pointListToggle" aria-expanded="false" aria-controls="pointList" onclick="togglePointList()"><span class="point-list-chevron" aria-hidden="true">▸</span> Pontos rastreados</button>
+  </div>
+  <div class="list point-list-body" id="pointList"></div>
+</div>
 </section>
 <section class="card"><h2 style="margin-top:0">🔎 Ressonâncias</h2><div class="small">Digite um ponto encontrado para ver os pares associados.</div><div class="row"><input id="search" placeholder="Ex.: estômago, fígado, pineal..." oninput="searchPairs()"></div><div class="results" id="results"></div><div class="row"><button class="green" onclick="activateSelected()">🧲 Ativar par selecionado + 40 min</button></div><div class="small" id="selectedInfo">Nenhum par selecionado.</div></section>
 </div>
@@ -511,6 +538,15 @@ function unlockAudio(){
 }
 function testSound(){unlockAudio(); setTimeout(()=>speak('Som de teste. Pineal. Pré-pineal. Pós-pineal.'),100)}
 function testBeep(){try{const C=window.AudioContext||window.webkitAudioContext; if(!C){alert('Seu navegador não suporta o sinal de áudio.');return} const c=new C(); const o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.value=.15;o.connect(g);g.connect(c.destination);o.start();setTimeout(()=>{o.stop();c.close()},250);document.getElementById('audioStatus').textContent='🔔 Sinal de áudio emitido.';}catch(e){alert('Não foi possível emitir o sinal: '+e.message)}}
+function togglePointList(){
+  const panel=document.getElementById('pointListPanel');
+  const btn=document.getElementById('pointListToggle');
+  if(!panel||!btn) return;
+  const open=panel.classList.toggle('is-open');
+  btn.setAttribute('aria-expanded', open?'true':'false');
+  const chev=btn.querySelector('.point-list-chevron');
+  if(chev) chev.textContent=open?'▾':'▸';
+}
 function render(){
   let a=arr();
   document.getElementById('point').textContent=idx<0?'Pressione INICIAR':a[idx];
