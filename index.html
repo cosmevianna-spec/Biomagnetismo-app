@@ -277,7 +277,7 @@ footer::before{content:"❤ ";color:var(--green)}
 </div>
 <div class="row"><button onclick="start()">▶ Iniciar</button><button class="secondary" onclick="toggleAuto()" id="autoBtn">⏸ Pausar automático</button><button class="secondary" onclick="prev()">◀ Anterior</button><button class="secondary" onclick="next()">Próximo ▶</button><button class="secondary" onclick="repeatSpeech()">🔊 Repetir</button><button class="secondary" onclick="stopGuide()">⏹ Parar</button></div>
 <div class="auto-controls">
-  <div><label for="interval"><b>Tempo por ponto:</b> <span id="intervalLabel">8 s</span></label><input id="interval" type="range" min="3" max="30" value="8" oninput="updateInterval()"></div>
+  <div><label for="interval"><b>Tempo por ponto:</b> <span id="intervalLabel">2 s</span></label><input id="interval" type="range" min="1" max="30" value="2" oninput="updateInterval()"></div>
   <div><label for="speechRate"><b>Velocidade da fala:</b> <span id="speechLabel">normal</span></label><input id="speechRate" type="range" min="0.55" max="1.15" step="0.05" value="0.82" oninput="updateSpeechRate()"></div>
   <div class="row"><button class="secondary" onclick="unlockAudio()">🔊 Ativar áudio</button><button class="secondary" onclick="testSound()">🎧 Testar voz</button><button class="secondary" onclick="testBeep()">🔔 Testar sinal</button><span class="small" style="align-self:center">Toque em “Ativar áudio” antes de iniciar. No iPhone use o Safari; no Android use o Chrome.</span></div><div class="small" id="audioStatus" style="margin-top:8px">Áudio ainda não ativado.</div>
 </div>
@@ -290,7 +290,7 @@ footer::before{content:"❤ ";color:var(--green)}
   <div class="list point-list-body" id="pointList"></div>
 </div>
 </section>
-<section class="card"><h2 style="margin-top:0">🔎 Ressonâncias</h2><div class="small">Digite um ponto encontrado para ver os pares associados.</div><div class="row"><input id="search" placeholder="Ex.: estômago, fígado, pineal..." oninput="searchPairs()"></div><div class="results" id="results"></div><div class="row"><button class="green" onclick="activateSelected()">🧲 Ativar par selecionado + 40 min</button></div><div class="small" id="selectedInfo">Nenhum par selecionado.</div></section>
+<section class="card"><h2 style="margin-top:0">🔎 Ressonâncias</h2><div class="small">Digite um ponto encontrado para ver os pares associados.</div><div class="row"><input id="search" name="resonance-search" type="search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="search" placeholder="Ex.: estômago, fígado, pineal..." oninput="searchPairs()"></div><div class="results" id="results"></div><div class="row"><button class="green" onclick="activateSelected()">🧲 Ativar par selecionado + 40 min</button></div><div class="small" id="selectedInfo">Nenhum par selecionado.</div></section>
 </div>
 <section class="card" style="margin-top:16px"><h2 style="margin-top:0">⏱️ Pares ativos</h2><div class="small">Cada par tem seu próprio cronômetro de 40 minutos. O aplicativo pode manter vários simultaneamente.</div><div id="timers" style="margin-top:12px"></div></section>
 <section class="card" style="margin-top:16px"><h2 style="margin-top:0">📋 Histórico do rastreio</h2>
@@ -331,7 +331,7 @@ function nextTrackMode(){
   const n=TRACK_ORDER[i+1];
   return TRACK[n] && TRACK[n].length ? n : null;
 }
-let mode='reservatorios',idx=-1,selected=null,timers=[]; const synth=window.speechSynthesis; let voices=[]; let selectedVoice=null; let audioUnlocked=false; let autoRunning=false, autoTimer=null, intervalSec=8, speechRate=.82, speaking=false;
+let mode='reservatorios',idx=-1,selected=null,timers=[]; const synth=window.speechSynthesis; let voices=[]; let selectedVoice=null; let audioUnlocked=false; let autoRunning=false, autoTimer=null, intervalSec=2, speechRate=.82, speaking=false;
 const NAME_STORE='biomagnetismo.nomePontos.v1';
 function loadNameMap(){try{return JSON.parse(localStorage.getItem(NAME_STORE)||'{}')||{}}catch(e){return {}}}
 function persistNameMap(){try{localStorage.setItem(NAME_STORE,JSON.stringify(nameMap))}catch(e){}}
@@ -776,7 +776,7 @@ function foldSearchKey(s){
 function pairMatchesSearch(p, raw){
   const q=normPoint(raw);
   const a=normPoint(p.a), b=normPoint(p.b);
-  if(!q) return true;
+  if(!q) return false;
   if(a===q || a.includes(q) || b===q || b.includes(q)) return true;
   const aliases=SEARCH_NAME_ALIASES[foldSearchKey(raw)];
   if(!aliases) return false;
@@ -788,10 +788,22 @@ function pairMatchesSearch(p, raw){
   }
   return false;
 }
+function sanitizeSearchField(){
+  const el=document.getElementById('search');
+  if(!el) return;
+  const v=el.value.trim();
+  if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) el.value='';
+}
 function searchPairs(){
+  sanitizeSearchField();
   const raw=document.getElementById('search').value.trim();
+  const resultsEl=document.getElementById('results');
+  if(!raw){
+    resultsEl.innerHTML='';
+    return;
+  }
   let out=window.pairsCache.filter(p=>pairMatchesSearch(p, raw)).slice(0,80);
-  document.getElementById('results').innerHTML=out.length?out.map((p,i)=>`<div class="result"><b>${esc(pairCaption(p))}</b>${pairDetailsHtml(p)}<div class="row"><button class="secondary" onclick='selectPair(${JSON.stringify({n:p.n,a:p.a,b:p.b,type:p.type}).replace(/'/g,"&apos;")})'>Selecionar</button><button class="secondary" onclick='speakResonancePair(${JSON.stringify({n:p.n,a:p.a,b:p.b,type:p.type}).replace(/'/g,"&apos;")})'>🔊 Falar ponto</button></div></div>`).join(''):'<div class="small">Nenhum par encontrado.</div>'}
+  resultsEl.innerHTML=out.length?out.map((p,i)=>`<div class="result"><b>${esc(pairCaption(p))}</b>${pairDetailsHtml(p)}<div class="row"><button class="secondary" onclick='selectPair(${JSON.stringify({n:p.n,a:p.a,b:p.b,type:p.type}).replace(/'/g,"&apos;")})'>Selecionar</button><button class="secondary" onclick='speakResonancePair(${JSON.stringify({n:p.n,a:p.a,b:p.b,type:p.type}).replace(/'/g,"&apos;")})'>🔊 Falar ponto</button></div></div>`).join(''):'<div class="small">Nenhum par encontrado.</div>'}
 function selectPair(p){
   selected=p;
   document.getElementById('selectedInfo').innerHTML='<b>Selecionado:</b> '+esc(pairCaption(p))+pairDetailsHtml(p);
@@ -934,6 +946,7 @@ async function refreshPublicPares() {
   const localPairs = window.DATA && window.DATA.pairs ? window.DATA.pairs : [];
   const result = await fetchSearchParesWithFallback(localPairs);
   window.pairsCache = result.pairs;
+  if (typeof window.sanitizeSearchField === 'function') window.sanitizeSearchField();
   if (typeof window.searchPairs === 'function') window.searchPairs();
 }
 
