@@ -238,7 +238,8 @@ footer::before{content:"❤ ";color:var(--green)}
   .tabs button{flex:1 1 calc(50% - 4px);min-width:0}
   .header-actions{width:100%;justify-content:flex-end}
   .header-actions button{min-height:40px;padding:10px 12px;font-size:14px}
-  .results,.list,.admin-list{max-height:none}
+  .list,.admin-list{max-height:none}
+  .results{max-height:min(280px,38vh);overflow:auto}
   .point-list-panel.is-open .point-list-body{max-height:min(280px,38vh)!important}
   .admin-toolbar input{min-width:0;width:100%}
   footer{padding:8px max(12px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
